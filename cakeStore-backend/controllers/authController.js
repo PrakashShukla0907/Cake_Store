@@ -3,8 +3,7 @@ import User from "../models/user.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-/*----------------------------signup logic start------------------------------------------------*/ 
- 
+/*----------------------------signup logic start------------------------------------------------*/
 
 export const postSignup = [
   check("name").trim().notEmpty().withMessage("Name is required"),
@@ -94,9 +93,63 @@ export const postSignup = [
 /*-----------------------------------login logic start------------------------------------------------*/
 
 export const postLogin = async (req, res) => {
-  console.log("login successfully");
-};
+  const { identifier, password } = req.body;
 
-export const postLogout = async (req, res) => {
-  res.json({ message: "logout successfully" });
+  try {
+    // Validate input
+    if (!identifier || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email/Phone and password are required",
+      });
+    }
+
+    // Find user by email or phone
+    const user = await User.findOne({
+      $or: [{ email: identifier }, { phone: identifier }],
+    });
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid credentials",
+      });
+    }
+
+    // Compare password
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid credentials",
+      });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" },
+    );
+
+    // Send response (adjust fields as needed)
+    return res.status(200).json({
+      success: true,
+      message: "Login successful",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.error("Login error:", error); // good for debugging
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
 };

@@ -2,14 +2,10 @@ import express from "express";
 
 const authRoutes = express.Router();
 
-import {
-  postSignup,
-  postLogin,
-  postLogout,
-} from "../controllers/authController.js";
+import { postSignup, postLogin } from "../controllers/authController.js";
 
 authRoutes.post("/signup", postSignup);
 authRoutes.post("/login", postLogin);
-authRoutes.post("/logout", postLogout);
+// authRoutes.post("/logout", postLogout);
 
 export default authRoutes;

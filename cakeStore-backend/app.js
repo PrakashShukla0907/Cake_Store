@@ -7,12 +7,12 @@ import connectDB from "./config/db.js";
 
 dotenv.config();
 
-
 // connect to database
 await connectDB();
 
-
+// local modules
 import authRoutes from "./routes/authRoutes.js";
+import { verifyToken } from "./middleware/auth.js";
 
 const app = express();
 
@@ -26,9 +26,15 @@ app.get("/", (req, res) => {
   res.send("Bakery API is running...");
 });
 
-
-
 app.use("/api/auth", authRoutes);
+
+app.get("/api/profile", verifyToken, (req, res) => {
+  res.json({
+    success: true,
+    message: "You are authenticated",
+    user: req.user, // { id, role }
+  });
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>

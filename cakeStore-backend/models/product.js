@@ -24,7 +24,7 @@ const productSchema = new mongoose.Schema(
 
     category: {
       type: String,
-      enum: ["Cake", "Pastry", "Bread", "Cookies", "Other"],
+      enum: ["Cake", "Pastry", "Bread", "Cookies", "cupcake", "Other"],
       default: "Other",
     },
 
