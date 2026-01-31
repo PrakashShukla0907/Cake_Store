@@ -1,11 +1,17 @@
 import express from "express";
+import {
+  postSignup,
+  postLogin,
+  postLogout,
+} from "../controllers/authController.js";
+import { verifyToken } from "../middleware/auth.js";
 
 const authRoutes = express.Router();
 
-import { postSignup, postLogin } from "../controllers/authController.js";
-
 authRoutes.post("/signup", postSignup);
 authRoutes.post("/login", postLogin);
-// authRoutes.post("/logout", postLogout);
+
+// 🔐 logout should be protected
+authRoutes.post("/logout", verifyToken, postLogout);
 
 export default authRoutes;

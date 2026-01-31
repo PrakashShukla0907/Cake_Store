@@ -7,12 +7,14 @@ const userSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+
     phone: {
       type: String,
       required: true,
       unique: true,
       match: [/^[6-9]\d{9}$/, "Please enter a valid Indian phone number"],
     },
+
     email: {
       type: String,
       required: true,
@@ -30,23 +32,63 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+
+    // 🛒 Cart
     cart: [
       {
         productId: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "Product", // Ye "Product" model se link hai
+          ref: "Product",
           required: true,
         },
         quantity: {
           type: Number,
           default: 1,
-          min: [1, "Quantity 1 se kam nahi ho sakti"],
+          min: 1,
+        },
+        priceAtAdd: {
+          type: Number,
+          required: true,
+        },
+        addedAt: {
+          type: Date,
+          default: Date.now,
         },
       },
     ],
-  },
 
+    // ❤️ Favourite products
+    favourites: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+      },
+    ],
+
+    // 📦 Orders
+    orders: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Order",
+      },
+    ],
+
+    // 🏠 Address
+    address: {
+      street: String,
+      city: String,
+      state: String,
+      pincode: String,
+    },
+
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+  },
   { timestamps: true },
 );
 
-export default mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
+
+export default User;

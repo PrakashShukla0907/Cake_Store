@@ -132,19 +132,29 @@ export const postLogin = async (req, res) => {
       { expiresIn: "7d" },
     );
 
-    // Send response (adjust fields as needed)
-    return res.status(200).json({
-      success: true,
-      message: "Login successful",
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        role: user.role,
-      },
-    });
+    // Send response
+    // set cookie
+    const opts = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    };
+
+    res
+      .status(200)
+      .cookie("token", token, opts)
+      .json({
+        success: true,
+        message: "Login successful",
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          role: user.role,
+        },
+      });
   } catch (error) {
     console.error("Login error:", error); // good for debugging
     return res.status(500).json({
@@ -152,4 +162,17 @@ export const postLogin = async (req, res) => {
       message: "Internal server error",
     });
   }
+};
+
+/*------------------------------logout logic-------------------------------------------------*/
+
+export const postLogout = (req, res) => {
+  const opts = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  };
+
+  res.clearCookie("token", opts);
+  return res.json({ success: true, message: "Logged out" });
 };

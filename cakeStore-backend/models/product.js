@@ -11,6 +11,7 @@ const productSchema = new mongoose.Schema(
     description: {
       type: String,
       required: true,
+      trim: true,
     },
 
     price: {
@@ -24,7 +25,7 @@ const productSchema = new mongoose.Schema(
 
     category: {
       type: String,
-      enum: ["Cake", "Pastry", "Bread", "Cookies", "cupcake", "Other"],
+      enum: ["cake", "pastry", "bread", "cookies", "cupcake", "other"],
       default: "Other",
     },
 
@@ -37,4 +38,5 @@ const productSchema = new mongoose.Schema(
 );
 
 const Product = mongoose.model("Product", productSchema);
+
 export default Product;
