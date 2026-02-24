@@ -3,6 +3,7 @@ import {
   postSignup,
   postLogin,
   postLogout,
+  getProfile,
 } from "../controllers/authController.js";
 import { verifyToken } from "../middleware/auth.js";
 
@@ -13,5 +14,8 @@ authRoutes.post("/login", postLogin);
 
 // 🔐 logout should be protected
 authRoutes.post("/logout", verifyToken, postLogout);
+
+// 🔐 get user profile
+authRoutes.get("/me", verifyToken, getProfile);
 
 export default authRoutes;

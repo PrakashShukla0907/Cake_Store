@@ -1,0 +1,119 @@
+@import "tailwindcss";
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+}
+
+html.dark body {
+  background-color: #2b1b17;
+  color: #e5d3c5;
+}
+
+.btn-primary {
+  background-color: #e9bcb7;
+  color: #f9f1e7;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease-in-out;
+  transform-origin: center;
+}
+
+.btn-primary:hover {
+  background-color: #4a3728;
+  transform: scale(1.05);
+}
+
+.dark .btn-primary {
+  background-color: #b97a6a;
+  color: #e5d3c5;
+}
+
+.dark .btn-primary:hover {
+  background-color: #2b1b17;
+}
+
+.btn-secondary {
+  background-color: #4a3728;
+  color: #f9f1e7;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-secondary:hover {
+  background-color: #e9bcb7;
+}
+
+.dark .btn-secondary {
+  background-color: #2b1b17;
+  color: #e5d3c5;
+}
+
+.dark .btn-secondary:hover {
+  background-color: #b97a6a;
+}
+
+.card {
+  background-color: #f9f1e7;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s;
+  overflow: hidden;
+}
+
+.card:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.dark .card {
+  background-color: #e5d3c5;
+}
+
+.input-field {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border: 1px solid #4a3728;
+  border-radius: 0.5rem;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.input-field:focus {
+  outline: 2px solid #e9bcb7;
+  outline-offset: 2px;
+  border-color: transparent;
+}
+
+.dark .input-field {
+  border-color: #2b1b17;
+}
+
+.dark .input-field:focus {
+  outline: 2px solid #b97a6a;
+  outline-offset: 2px;
+}
+
+.section-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #4a3728;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+  .section-title {
+    font-size: 2.25rem;
+  }
+}
+
+.dark .section-title {
+  color: #b97a6a;
+}

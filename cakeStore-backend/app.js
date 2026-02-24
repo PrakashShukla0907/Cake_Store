@@ -18,9 +18,6 @@ import adminProductRoutes from "./routes/adminProductRoutes.js";
 
 dotenv.config();
 
-// connect to database
-await connectDB();
-
 const app = express();
 
 // ---------- MIDDLEWARE ----------
@@ -30,12 +27,18 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: process.env.CLIENT_ORIGIN || "http://localhost:3000",
+    origin: process.env.CLIENT_ORIGIN || "http://localhost:5173",
     credentials: true,
   }),
 );
 
 app.use(morgan("dev"));
+
+// ---------- DATABASE CONNECTION (Non-blocking) ----------
+connectDB().catch((err) => {
+  console.error("Failed to connect to MongoDB:", err.message);
+  // Server will still start even if DB connection fails
+});
 
 // ---------- BASE ROUTE ----------
 app.get("/", (req, res) => {

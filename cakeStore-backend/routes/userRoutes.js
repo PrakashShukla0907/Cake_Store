@@ -8,19 +8,26 @@ import {
   getFavourites,
 } from "../controllers/userController.js";
 
+import { getProfile } from "../controllers/authController.js";
+
 import { verifyToken } from "../middleware/auth.js";
 
 const userRoutes = express.Router();
 
+/* ================= PROFILE ROUTE ================= */
+
+// Get user profile
+userRoutes.get("/profile", verifyToken, getProfile);
+
 /* ================= CART ROUTES ================= */
 
-// Add product to cart
-userRoutes.post("/cart", verifyToken, addToCart);
-
-// Get user cart
+// Get cart
 userRoutes.get("/cart", verifyToken, getCart);
 
-// Update cart item quantity
+// Add to cart
+userRoutes.post("/cart", verifyToken, addToCart);
+
+// Update cart quantity
 userRoutes.put("/cart", verifyToken, updateCartQuantity);
 
 // Remove item from cart
