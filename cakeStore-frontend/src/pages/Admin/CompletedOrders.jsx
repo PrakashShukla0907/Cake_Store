@@ -136,7 +136,7 @@ export default function CompletedOrders() {
           )}>
             <div className={classNames(
               "p-2.5 rounded-xl transition-colors duration-300",
-              theme === "dark" ? "bg-emerald-500/20 text-emerald-400 group-hover:bg-emerald-500/30" : "bg-white text-emerald-600 shadow-sm"
+              theme === "dark" ? "bg-emerald-500/20 text-emerald-400 group-hover:bg-emerald-500/30" : "bg-theme-cream-solid text-emerald-600 shadow-sm"
             )}>
               <span className="text-xl font-bold">₹</span>
             </div>
@@ -357,7 +357,7 @@ const StatusDropdown = ({ currentStatus, onChange, theme, getStatusConfig, isUpd
           <div className="fixed inset-0 z-[45]" onClick={() => setIsOpen(false)} />
           <div className={classNames(
             "absolute left-0 mt-2 w-full min-w-[180px] rounded-2xl shadow-2xl ring-1 ring-black ring-opacity-5 z-[100] animate-in fade-in zoom-in duration-200 origin-top",
-            theme === "dark" ? "bg-slate-900 border border-slate-700" : "bg-white border border-rose-100"
+            theme === "dark" ? "bg-slate-900 border border-slate-700" : "bg-theme-cream-solid border border-rose-100"
           )}>
             <div className="p-1">
               {options.map((opt) => {
@@ -408,7 +408,7 @@ const OrderDetailsModal = ({ order, onClose, theme, getStatusConfig }) => {
 
         <div className={classNames(
           "relative transform overflow-hidden rounded-3xl text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-2xl animate-in fade-in zoom-in duration-300",
-          theme === "dark" ? "bg-slate-900 border border-slate-800" : "bg-white"
+          theme === "dark" ? "bg-slate-900 border border-slate-800" : "bg-theme-cream-solid"
         )}>
           {/* Header */}
           <div className={classNames(
@@ -480,7 +480,7 @@ const OrderDetailsModal = ({ order, onClose, theme, getStatusConfig }) => {
                     key={idx} 
                     className={classNames(
                       "flex items-center justify-between p-4 border-b last:border-0",
-                      theme === "dark" ? "border-slate-800 bg-slate-800/20" : "border-gray-50 bg-white"
+                      theme === "dark" ? "border-slate-800 bg-slate-800/20" : "border-gray-50 bg-theme-cream-solid"
                     )}
                   >
                     <div className="flex items-center gap-4">
@@ -508,7 +508,7 @@ const OrderDetailsModal = ({ order, onClose, theme, getStatusConfig }) => {
               theme === "dark" ? "bg-slate-800/80" : "bg-slate-900 text-white"
             )}>
               <div className="flex items-center gap-4">
-                <div className="p-3 bg-white/10 rounded-2xl">
+                <div className="p-3 bg-theme-cream-solid/10 rounded-2xl">
                    <CreditCard className="h-5 w-5" />
                 </div>
                 <div>
@@ -531,7 +531,7 @@ const OrderDetailsModal = ({ order, onClose, theme, getStatusConfig }) => {
               onClick={onClose}
               className={classNames(
                 "flex-1 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all",
-                theme === "dark" ? "bg-slate-800 text-white hover:bg-slate-700" : "bg-white border border-gray-200 text-slate-600 hover:bg-gray-100"
+                theme === "dark" ? "bg-slate-800 text-white hover:bg-slate-700" : "bg-theme-cream-solid border border-gray-200 text-slate-600 hover:bg-gray-100"
               )}
             >
               Close

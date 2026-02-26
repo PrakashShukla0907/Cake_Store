@@ -61,7 +61,7 @@ export default function Home() {
         "min-h-screen pb-12 transition-colors duration-300",
         theme === "dark"
           ? "bg-slate-900 text-slate-200"
-          : "bg-gradient-to-br from-rose-50 via-pink-50 to-rose-100 text-slate-800",
+          : "bg-theme-cream-gradient text-slate-800",
       )}
     >
 
@@ -79,7 +79,7 @@ export default function Home() {
             <p className="text-xl font-medium opacity-70">Loading delicious cakes...</p>
           </div>
         ) : products.length === 0 ? (
-          <div className="text-center py-24 bg-white/50 dark:bg-slate-800/10 backdrop-blur-sm rounded-3xl border border-white/50 dark:border-slate-700 shadow-xl">
+          <div className="text-center py-24 bg-theme-cream-solid/50 dark:bg-slate-800/10 backdrop-blur-sm rounded-3xl border border-white/50 dark:border-slate-700 shadow-xl">
             <p className="text-5xl mb-6">😢</p>
             <h3 className="text-2xl font-bold mb-2">No cakes found</h3>
             <p className="opacity-70 font-medium">
@@ -90,20 +90,20 @@ export default function Home() {
           </div>
         ) : (
           <>
-            <div className="mb-10 flex items-center justify-between">
-              <h2
-                className={classNames(
-                  "text-3xl sm:text-4xl font-extrabold tracking-tight",
-                  theme === "dark" 
-                    ? "text-white" 
-                    : "bg-gradient-to-r from-rose-500 to-pink-600 bg-clip-text text-transparent"
-                )}
-              >
-                {searchQuery
-                  ? `Results for "${searchQuery}"`
-                  : "Featured Cakes"}
-              </h2>
-            </div>
+            {searchQuery && (
+              <div className="mb-10 flex items-center justify-between">
+                <h2
+                  className={classNames(
+                    "text-3xl sm:text-4xl font-extrabold tracking-tight",
+                    theme === "dark" 
+                      ? "text-white" 
+                      : "bg-gradient-to-r from-rose-500 to-pink-600 bg-clip-text text-transparent"
+                  )}
+                >
+                  Results for "{searchQuery}"
+                </h2>
+              </div>
+            )}
 
             {/* Products Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8 mb-16">
@@ -122,7 +122,7 @@ export default function Home() {
                       "px-4 py-2.5 rounded-xl font-bold transition-all shadow-sm hover:shadow-md transform hover:-translate-y-0.5",
                       theme === "dark"
                         ? "bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700"
-                        : "bg-white text-slate-700 hover:text-rose-600 border border-rose-100 hover:border-rose-200",
+                        : "bg-theme-cream-solid text-slate-700 hover:text-rose-600 border border-rose-100 hover:border-rose-200",
                     )}
                   >
                     ← Prev
@@ -142,7 +142,7 @@ export default function Home() {
                             : "bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-rose-200"
                           : theme === "dark"
                             ? "bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700"
-                            : "bg-white text-slate-600 hover:text-rose-600 hover:bg-rose-50 border border-gray-100",
+                            : "bg-theme-cream-solid text-slate-600 hover:text-rose-600 hover:bg-rose-50 border border-gray-100",
                       )}
                     >
                       {page}
@@ -157,7 +157,7 @@ export default function Home() {
                       "px-4 py-2.5 rounded-xl font-bold transition-all shadow-sm hover:shadow-md transform hover:-translate-y-0.5",
                       theme === "dark"
                         ? "bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700"
-                        : "bg-white text-slate-700 hover:text-rose-600 border border-rose-100 hover:border-rose-200",
+                        : "bg-theme-cream-solid text-slate-700 hover:text-rose-600 border border-rose-100 hover:border-rose-200",
                     )}
                   >
                     Next →

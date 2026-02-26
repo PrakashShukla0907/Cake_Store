@@ -74,7 +74,7 @@ export default function OfferBanner() {
           {/* Previous Button */}
           <button 
             onClick={() => setCurrentIndex((prev) => (prev === 0 ? banners.length - 1 : prev - 1))}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md border border-white/20 hover:bg-white/20 opacity-0 lg:group-hover:opacity-100 transition-all duration-300 transform hover:scale-110 shadow-xl"
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-theme-cream-solid/10 text-white backdrop-blur-md border border-white/20 hover:bg-theme-cream-solid/20 opacity-0 lg:group-hover:opacity-100 transition-all duration-300 transform hover:scale-110 shadow-xl"
             aria-label="Previous Slide"
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5 sm:w-6 sm:h-6 ml-1 flex-shrink-0">
@@ -85,7 +85,7 @@ export default function OfferBanner() {
           {/* Next Button */}
           <button 
             onClick={() => setCurrentIndex((prev) => (prev + 1) % banners.length)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md border border-white/20 hover:bg-white/20 opacity-0 lg:group-hover:opacity-100 transition-all duration-300 transform hover:scale-110 shadow-xl"
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-theme-cream-solid/10 text-white backdrop-blur-md border border-white/20 hover:bg-theme-cream-solid/20 opacity-0 lg:group-hover:opacity-100 transition-all duration-300 transform hover:scale-110 shadow-xl"
             aria-label="Next Slide"
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5 sm:w-6 sm:h-6 mr-1 flex-shrink-0">
@@ -102,8 +102,8 @@ export default function OfferBanner() {
                 aria-label={`Go to slide ${idx + 1}`}
                 className={`transition-all duration-300 rounded-full ${
                   idx === currentIndex 
-                    ? 'w-6 sm:w-8 h-2 sm:h-2.5 bg-white shadow-[0_0_10px_rgba(255,255,255,0.7)]' 
-                    : 'w-2 sm:w-2.5 h-2 sm:h-2.5 bg-white/40 hover:bg-white/60 hover:scale-110'
+                    ? 'w-6 sm:w-8 h-2 sm:h-2.5 bg-theme-cream-solid shadow-[0_0_10px_rgba(255,255,255,0.7)]' 
+                    : 'w-2 sm:w-2.5 h-2 sm:h-2.5 bg-theme-cream-solid/40 hover:bg-theme-cream-solid/60 hover:scale-110'
                 }`}
               />
             ))}

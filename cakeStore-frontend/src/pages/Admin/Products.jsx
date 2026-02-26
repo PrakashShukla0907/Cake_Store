@@ -163,7 +163,7 @@ export default function AdminProducts() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
           <div className={classNames(
             "w-full max-w-md rounded-2xl shadow-xl border max-h-[90vh] overflow-hidden flex flex-col",
-            theme === "dark" ? "bg-slate-900 border-slate-700" : "bg-white border-rose-100"
+            theme === "dark" ? "bg-slate-900 border-slate-700" : "bg-theme-cream-solid border-rose-100"
           )}>
             {/* Loading Bar */}
             <div className="relative h-1 w-full overflow-hidden rounded-t-2xl bg-transparent">
@@ -187,12 +187,12 @@ export default function AdminProducts() {
             <form onSubmit={handleSaveProduct} className="space-y-4">
               <div>
                 <label className={classNames("block text-sm font-medium mb-1", theme === "dark" ? "text-slate-300" : "text-gray-700")}>Product Name</label>
-                <input required type="text" value={newProduct.name} onChange={e => setNewProduct({...newProduct, name: e.target.value})} className={classNames("w-full rounded-lg border-0 py-2 px-3 shadow-sm ring-1 ring-inset focus:ring-2", theme === "dark" ? "bg-slate-800 text-white ring-slate-700 focus:ring-rose-500" : "bg-white text-gray-900 ring-rose-200 focus:ring-rose-500")} />
+                <input required type="text" value={newProduct.name} onChange={e => setNewProduct({...newProduct, name: e.target.value})} className={classNames("w-full rounded-lg border-0 py-2 px-3 shadow-sm ring-1 ring-inset focus:ring-2", theme === "dark" ? "bg-slate-800 text-white ring-slate-700 focus:ring-rose-500" : "bg-theme-cream-solid text-gray-900 ring-rose-200 focus:ring-rose-500")} />
               </div>
               
               <div>
                 <label className={classNames("block text-sm font-medium mb-1", theme === "dark" ? "text-slate-300" : "text-gray-700")}>Description</label>
-                <textarea required rows={2} value={newProduct.description} onChange={e => setNewProduct({...newProduct, description: e.target.value})} className={classNames("w-full rounded-lg border-0 py-2 px-3 shadow-sm ring-1 ring-inset focus:ring-2", theme === "dark" ? "bg-slate-800 text-white ring-slate-700 focus:ring-rose-500" : "bg-white text-gray-900 ring-rose-200 focus:ring-rose-500")} />
+                <textarea required rows={2} value={newProduct.description} onChange={e => setNewProduct({...newProduct, description: e.target.value})} className={classNames("w-full rounded-lg border-0 py-2 px-3 shadow-sm ring-1 ring-inset focus:ring-2", theme === "dark" ? "bg-slate-800 text-white ring-slate-700 focus:ring-rose-500" : "bg-theme-cream-solid text-gray-900 ring-rose-200 focus:ring-rose-500")} />
               </div>
 
               <div>
@@ -231,7 +231,7 @@ export default function AdminProducts() {
                   }} 
                   className={classNames(
                     "w-full rounded-lg border-0 py-2 px-3 shadow-sm ring-1 ring-inset focus:ring-2", 
-                    theme === "dark" ? "bg-slate-800 text-white ring-slate-700 focus:ring-rose-500" : "bg-white text-gray-900 ring-rose-200 focus:ring-rose-500",
+                    theme === "dark" ? "bg-slate-800 text-white ring-slate-700 focus:ring-rose-500" : "bg-theme-cream-solid text-gray-900 ring-rose-200 focus:ring-rose-500",
                     "file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold text-xs",
                     theme === "dark" ? "file:bg-rose-500/10 file:text-rose-400 hover:file:bg-rose-500/20" : "file:bg-rose-50 file:text-rose-700 hover:file:bg-rose-100"
                   )} 
@@ -241,7 +241,7 @@ export default function AdminProducts() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className={classNames("block text-sm font-medium mb-1", theme === "dark" ? "text-slate-300" : "text-gray-700")}>Category</label>
-                  <select required value={newProduct.category} onChange={e => setNewProduct({...newProduct, category: e.target.value})} className={classNames("w-full rounded-lg border-0 py-2 px-3 shadow-sm ring-1 ring-inset focus:ring-2", theme === "dark" ? "bg-slate-800 text-white ring-slate-700 focus:ring-rose-500" : "bg-white text-gray-900 ring-rose-200 focus:ring-rose-500")}>
+                  <select required value={newProduct.category} onChange={e => setNewProduct({...newProduct, category: e.target.value})} className={classNames("w-full rounded-lg border-0 py-2 px-3 shadow-sm ring-1 ring-inset focus:ring-2", theme === "dark" ? "bg-slate-800 text-white ring-slate-700 focus:ring-rose-500" : "bg-theme-cream-solid text-gray-900 ring-rose-200 focus:ring-rose-500")}>
                     {["cake", "pastry", "bread", "cookies", "cupcake", "other"].map(cat => (
                       <option key={cat} value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
                     ))}
@@ -249,7 +249,7 @@ export default function AdminProducts() {
                 </div>
                 <div>
                   <label className={classNames("block text-sm font-medium mb-1", theme === "dark" ? "text-slate-300" : "text-gray-700")}>Price (₹)</label>
-                  <input required type="number" step="0.01" min="0" value={newProduct.price} onChange={e => setNewProduct({...newProduct, price: e.target.value})} className={classNames("w-full rounded-lg border-0 py-2 px-3 shadow-sm ring-1 ring-inset focus:ring-2", theme === "dark" ? "bg-slate-800 text-white ring-slate-700 focus:ring-rose-500" : "bg-white text-gray-900 ring-rose-200 focus:ring-rose-500")} />
+                  <input required type="number" step="0.01" min="0" value={newProduct.price} onChange={e => setNewProduct({...newProduct, price: e.target.value})} className={classNames("w-full rounded-lg border-0 py-2 px-3 shadow-sm ring-1 ring-inset focus:ring-2", theme === "dark" ? "bg-slate-800 text-white ring-slate-700 focus:ring-rose-500" : "bg-theme-cream-solid text-gray-900 ring-rose-200 focus:ring-rose-500")} />
                 </div>
               </div>
 

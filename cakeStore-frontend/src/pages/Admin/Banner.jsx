@@ -191,7 +191,7 @@ const AdminBanners = () => {
                             <button 
                                 onClick={handleCancelSelection}
                                 disabled={uploading}
-                                className="bg-white/20 hover:bg-white/30 backdrop-blur-md text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all disabled:opacity-50"
+                                className="bg-theme-cream-solid/20 hover:bg-theme-cream-solid/30 backdrop-blur-md text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all disabled:opacity-50"
                             >
                                 <X className="h-3 w-3"/> Cancel
                             </button>

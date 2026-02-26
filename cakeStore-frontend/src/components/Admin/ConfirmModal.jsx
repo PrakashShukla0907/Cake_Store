@@ -22,7 +22,7 @@ export default function ConfirmModal({ isOpen, onClose, onConfirm, title, messag
       {/* Modal Content */}
       <div className={classNames(
         "relative w-full max-w-md transform overflow-hidden rounded-2xl shadow-2xl transition-all border animate-in fade-in zoom-in duration-300",
-        theme === "dark" ? "bg-slate-900 border-slate-700 shadow-slate-950/50" : "bg-white border-rose-100 shadow-rose-200/50"
+        theme === "dark" ? "bg-slate-900 border-slate-700 shadow-slate-950/50" : "bg-theme-cream-solid border-rose-100 shadow-rose-200/50"
       )}>
         <div className="p-6">
           <div className="flex items-start gap-4">
@@ -77,7 +77,7 @@ export default function ConfirmModal({ isOpen, onClose, onConfirm, title, messag
                 "inline-flex w-full justify-center rounded-xl px-4 py-2.5 text-sm font-bold shadow-sm transition-all sm:w-auto border",
                 theme === "dark" 
                   ? "bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700 hover:text-white" 
-                  : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50 hover:border-gray-300"
+                  : "bg-theme-cream-solid text-gray-700 border-gray-200 hover:bg-gray-50 hover:border-gray-300"
               )}
             >
               {cancelText}

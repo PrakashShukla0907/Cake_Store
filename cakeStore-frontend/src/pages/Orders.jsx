@@ -133,7 +133,7 @@ const Orders = () => {
               "rounded-3xl p-16 text-center border-2 border-dashed flex flex-col items-center gap-6",
               theme === "dark"
                 ? "bg-slate-900 border-slate-800"
-                : "bg-white border-rose-100 shadow-xl shadow-rose-500/5",
+                : "bg-theme-cream-solid border-rose-100 shadow-xl shadow-rose-500/5",
             )}
           >
             <div className="p-6 rounded-full bg-rose-50 dark:bg-rose-500/10 text-rose-500">
@@ -163,7 +163,7 @@ const Orders = () => {
                     "rounded-3xl border backdrop-blur-md relative overflow-hidden group transition-all duration-300 hover:shadow-2xl hover:shadow-rose-500/5",
                     theme === "dark"
                       ? "bg-slate-900/80 border-slate-800"
-                      : "bg-white border-rose-100",
+                      : "bg-theme-cream-solid border-rose-100",
                   )}
                 >
                   {/* Subtle Accent Glow */}
@@ -241,7 +241,7 @@ const Orders = () => {
                            <div className="grid sm:grid-cols-2 gap-4">
                              {order.items?.map((item, idx) => (
                                <div key={idx} className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
-                                 <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-700 flex items-center justify-center text-rose-500 font-black shadow-sm border border-slate-100 dark:border-slate-600">
+                                 <div className="w-10 h-10 rounded-xl bg-theme-cream-solid dark:bg-slate-700 flex items-center justify-center text-rose-500 font-black shadow-sm border border-slate-100 dark:border-slate-600">
                                    {item.quantity}
                                  </div>
                                  <div className="min-w-0">
@@ -316,7 +316,7 @@ const OrderReceiptModal = ({ order, onClose, theme, getStatusConfig }) => {
 
         <div className={classNames(
           "relative transform overflow-hidden rounded-3xl text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-xl animate-in fade-in zoom-in duration-300",
-          theme === "dark" ? "bg-slate-900 border border-slate-800" : "bg-white"
+          theme === "dark" ? "bg-slate-900 border border-slate-800" : "bg-theme-cream-solid"
         )}>
           {/* Print Action */}
           <div className="absolute top-4 right-14">

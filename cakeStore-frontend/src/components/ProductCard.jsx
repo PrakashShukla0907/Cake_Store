@@ -43,7 +43,7 @@ const ProductCard = ({ product }) => {
         "rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1.5 flex flex-col h-full border",
         theme === "dark"
           ? "bg-slate-800 border-slate-700 text-slate-200"
-          : "bg-white border-gray-100 text-slate-800",
+          : "bg-theme-cream-solid border-gray-100 text-slate-800",
       )}
     >
       {/* Product Image */}

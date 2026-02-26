@@ -140,7 +140,7 @@ const Checkout = () => {
                 "rounded-3xl p-8 border backdrop-blur-md relative overflow-hidden",
                 theme === "dark"
                   ? "bg-slate-900/80 border-slate-800"
-                  : "bg-white border-rose-100 shadow-xl shadow-rose-500/5",
+                  : "bg-theme-cream-solid border-rose-100 shadow-xl shadow-rose-500/5",
               )}
             >
               <div className="flex items-center gap-2 mb-8">
@@ -166,7 +166,7 @@ const Checkout = () => {
                         "w-full px-5 py-3.5 rounded-2xl border-2 outline-none transition-all font-bold",
                         theme === "dark"
                           ? "bg-slate-950 border-slate-800 text-white focus:border-rose-500/50 focus:ring-4 focus:ring-rose-500/10 placeholder:text-slate-700"
-                          : "bg-gray-50 border-rose-50 text-slate-900 focus:bg-white focus:border-rose-300 focus:ring-4 focus:ring-rose-500/5 placeholder:text-slate-300",
+                          : "bg-gray-50 border-rose-50 text-slate-900 focus:bg-theme-cream-solid focus:border-rose-300 focus:ring-4 focus:ring-rose-500/5 placeholder:text-slate-300",
                       )}
                     />
                   </div>
@@ -186,7 +186,7 @@ const Checkout = () => {
                         "w-full px-5 py-3.5 rounded-2xl border-2 outline-none transition-all font-bold",
                         theme === "dark"
                           ? "bg-slate-950 border-slate-800 text-white focus:border-rose-500/50 focus:ring-4 focus:ring-rose-500/10 placeholder:text-slate-700"
-                          : "bg-gray-50 border-rose-50 text-slate-900 focus:bg-white focus:border-rose-300 focus:ring-4 focus:ring-rose-500/5 placeholder:text-slate-300",
+                          : "bg-gray-50 border-rose-50 text-slate-900 focus:bg-theme-cream-solid focus:border-rose-300 focus:ring-4 focus:ring-rose-500/5 placeholder:text-slate-300",
                       )}
                     />
                   </div>
@@ -207,7 +207,7 @@ const Checkout = () => {
                       "w-full px-5 py-3.5 rounded-2xl border-2 outline-none transition-all font-bold",
                       theme === "dark"
                         ? "bg-slate-950 border-slate-800 text-white focus:border-rose-500/50 focus:ring-4 focus:ring-rose-500/10 placeholder:text-slate-700"
-                        : "bg-gray-50 border-rose-50 text-slate-900 focus:bg-white focus:border-rose-300 focus:ring-4 focus:ring-rose-500/5 placeholder:text-slate-300",
+                        : "bg-gray-50 border-rose-50 text-slate-900 focus:bg-theme-cream-solid focus:border-rose-300 focus:ring-4 focus:ring-rose-500/5 placeholder:text-slate-300",
                     )}
                   />
                 </div>
@@ -228,7 +228,7 @@ const Checkout = () => {
                       "w-full px-5 py-3.5 rounded-2xl border-2 outline-none transition-all font-bold",
                       theme === "dark"
                         ? "bg-slate-950 border-slate-800 text-white focus:border-rose-500/50 focus:ring-4 focus:ring-rose-500/10 placeholder:text-slate-700"
-                        : "bg-gray-50 border-rose-50 text-slate-900 focus:bg-white focus:border-rose-300 focus:ring-4 focus:ring-rose-500/5 placeholder:text-slate-300",
+                        : "bg-gray-50 border-rose-50 text-slate-900 focus:bg-theme-cream-solid focus:border-rose-300 focus:ring-4 focus:ring-rose-500/5 placeholder:text-slate-300",
                     )}
                   />
                 </div>
@@ -249,7 +249,7 @@ const Checkout = () => {
                         "w-full px-5 py-3.5 rounded-2xl border-2 outline-none transition-all font-bold",
                         theme === "dark"
                           ? "bg-slate-950 border-slate-800 text-white focus:border-rose-500/50 focus:ring-4 focus:ring-rose-500/10 placeholder:text-slate-700"
-                          : "bg-gray-50 border-rose-50 text-slate-900 focus:bg-white focus:border-rose-300 focus:ring-4 focus:ring-rose-500/5 placeholder:text-slate-300",
+                          : "bg-gray-50 border-rose-50 text-slate-900 focus:bg-theme-cream-solid focus:border-rose-300 focus:ring-4 focus:ring-rose-500/5 placeholder:text-slate-300",
                       )}
                     />
                   </div>
@@ -269,7 +269,7 @@ const Checkout = () => {
                         "w-full px-5 py-3.5 rounded-2xl border-2 outline-none transition-all font-bold",
                         theme === "dark"
                           ? "bg-slate-950 border-slate-800 text-white focus:border-rose-500/50 focus:ring-4 focus:ring-rose-500/10 placeholder:text-slate-700"
-                          : "bg-gray-50 border-rose-50 text-slate-900 focus:bg-white focus:border-rose-300 focus:ring-4 focus:ring-rose-500/5 placeholder:text-slate-300",
+                          : "bg-gray-50 border-rose-50 text-slate-900 focus:bg-theme-cream-solid focus:border-rose-300 focus:ring-4 focus:ring-rose-500/5 placeholder:text-slate-300",
                       )}
                     />
                   </div>
@@ -289,7 +289,7 @@ const Checkout = () => {
                         "w-full px-5 py-3.5 rounded-2xl border-2 outline-none transition-all font-bold",
                         theme === "dark"
                           ? "bg-slate-950 border-slate-800 text-white focus:border-rose-500/50 focus:ring-4 focus:ring-rose-500/10 placeholder:text-slate-700"
-                          : "bg-gray-50 border-rose-50 text-slate-900 focus:bg-white focus:border-rose-300 focus:ring-4 focus:ring-rose-500/5 placeholder:text-slate-300",
+                          : "bg-gray-50 border-rose-50 text-slate-900 focus:bg-theme-cream-solid focus:border-rose-300 focus:ring-4 focus:ring-rose-500/5 placeholder:text-slate-300",
                       )}
                     />
                   </div>
@@ -338,7 +338,7 @@ const Checkout = () => {
                 "rounded-3xl p-8 sticky top-24 border backdrop-blur-md relative overflow-hidden",
                 theme === "dark"
                   ? "bg-slate-900 border-slate-800"
-                  : "bg-white border-rose-100 shadow-2xl shadow-rose-500/5",
+                  : "bg-theme-cream-solid border-rose-100 shadow-2xl shadow-rose-500/5",
               )}
             >
                {/* Background Glow */}

@@ -90,7 +90,7 @@ export default function Navbar() {
         "sticky top-0 z-50 border-b transition-all duration-300",
         theme === "dark"
           ? "bg-slate-900 border-slate-800 text-slate-100 shadow-md"
-          : "bg-white border-gray-100 text-slate-800 shadow-sm"
+          : "bg-theme-cream-solid border-gray-100 text-slate-800 shadow-sm"
       )}
     >
       {({ close }) => (
@@ -235,7 +235,7 @@ export default function Navbar() {
                     {showNotifications && (
                       <div className={classNames(
                         "absolute right-[-100px] sm:right-[-50px] lg:right-0 mt-3 w-[calc(100vw-2rem)] sm:w-80 origin-top-right rounded-3xl shadow-2xl ring-1 ring-black/5 focus:outline-none transition-all duration-300 z-[60] overflow-hidden",
-                        theme === "dark" ? "bg-slate-900/95 border border-slate-700/50 backdrop-blur-xl" : "bg-white/95 border border-rose-100/50 backdrop-blur-xl"
+                        theme === "dark" ? "bg-slate-900/95 border border-slate-700/50 backdrop-blur-xl" : "bg-theme-cream-solid/95 border border-rose-100/50 backdrop-blur-xl"
                       )}>
                         <div className={classNames("p-4 py-3 border-b flex justify-between items-center", theme === "dark" ? "border-slate-800" : "border-gray-100")}>
                           <h3 className={classNames("text-sm font-black italic", theme === "dark" ? "text-white" : "text-slate-900 uppercase tracking-widest")}>Admin Alerts</h3>
@@ -323,7 +323,7 @@ export default function Navbar() {
                       "block w-full pl-10 pr-3 py-1.5 border rounded-full text-sm font-medium transition-all duration-300 outline-none focus:ring-2 focus:ring-opacity-50",
                       theme === "dark" 
                         ? "bg-slate-800/50 border-slate-700 text-slate-200 placeholder-slate-500 focus:bg-slate-800 focus:border-rose-500/50 focus:ring-rose-500/30"
-                        : "bg-gray-100/50 border-gray-200 text-slate-800 placeholder-slate-500 focus:bg-white focus:border-rose-300 focus:ring-rose-200"
+                        : "bg-gray-100/50 border-gray-200 text-slate-800 placeholder-slate-500 focus:bg-theme-cream-solid focus:border-rose-300 focus:ring-rose-200"
                     )}
                   />
                 </form>
@@ -363,7 +363,7 @@ export default function Navbar() {
                             "px-4 py-2 rounded-full font-semibold transition-all text-sm",
                             theme === "dark" 
                               ? "bg-slate-800 text-white hover:bg-slate-700" 
-                              : "bg-white text-rose-600 border border-rose-200 hover:bg-rose-50"
+                              : "bg-theme-cream-solid text-rose-600 border border-rose-200 hover:bg-rose-50"
                           )}
                         >
                           Login
@@ -416,10 +416,10 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Menu */}
-          <DisclosurePanel className="lg:hidden border-b border-rose-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl relative z-40">
+          <DisclosurePanel className="lg:hidden border-b border-rose-100 dark:border-slate-800 bg-theme-cream-solid dark:bg-slate-900 shadow-xl relative z-40">
             <div className={classNames(
               "space-y-1 px-4 pt-4 pb-8",
-              theme === "dark" ? "bg-slate-900" : "bg-white"
+              theme === "dark" ? "bg-slate-900" : "bg-theme-cream-solid"
             )}>
               {/* Mobile Global Search - Full Width */}
               <form 
@@ -450,7 +450,7 @@ export default function Navbar() {
                     "block w-full pl-11 pr-4 py-3.5 border rounded-2xl text-base font-bold transition-all duration-300 outline-none focus:ring-4 focus:ring-opacity-20",
                     theme === "dark" 
                       ? "bg-slate-800 border-slate-700 text-slate-200 placeholder-slate-500 focus:bg-slate-800/80 focus:border-rose-500/50 focus:ring-rose-500/30"
-                      : "bg-gray-50 border-gray-200 text-slate-800 placeholder-slate-500 focus:bg-white focus:border-rose-300 focus:ring-rose-500/20"
+                      : "bg-gray-50 border-gray-200 text-slate-800 placeholder-slate-500 focus:bg-theme-cream-solid focus:border-rose-300 focus:ring-rose-500/20"
                   )}
                 />
               </form>

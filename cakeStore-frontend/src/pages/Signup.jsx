@@ -1,6 +1,6 @@
 import { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { signupUser, getProfile } from "../api/auth.api";
+import { signupUser, getProfile, loginUser } from "../api/auth.api";
 import { AuthContext } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 
@@ -46,6 +46,9 @@ const Signup = () => {
     try {
       await signupUser(formData);
 
+      // We need to login to get the cookie!
+      await loginUser({ identifier: formData.email, password: formData.password });
+
       // auto login after signup
       const profileRes = await getProfile();
       setUser(profileRes.data.user);
@@ -64,7 +67,7 @@ const Signup = () => {
         "min-h-screen flex items-center justify-center pb-12 pt-8 transition-colors duration-300",
         theme === "dark"
           ? "bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-slate-200"
-          : "bg-gradient-to-br from-rose-50 via-pink-50 to-rose-100 text-slate-800",
+          : "bg-theme-cream-gradient text-slate-800",
       )}
     >
       <div className="w-full max-w-md px-4 sm:px-0 mt-8">
@@ -76,7 +79,7 @@ const Signup = () => {
             "rounded-2xl p-8 sm:p-10 shadow-2xl backdrop-blur-xl relative overflow-hidden",
             theme === "dark"
               ? "bg-slate-800/80 border border-slate-700 shadow-slate-900/50"
-              : "bg-white/80 border border-white/50 shadow-rose-200/50",
+              : "bg-theme-cream-solid/80 border border-white/50 shadow-rose-200/50",
           )}
         >
           {/* Subtle decoration */}
@@ -111,7 +114,7 @@ const Signup = () => {
                   "w-full px-4 py-2.5 rounded-xl border-2 focus:outline-none transition-all duration-300 font-medium",
                   theme === "dark"
                     ? "bg-slate-900/50 border-slate-700 text-slate-200 placeholder-slate-500 focus:bg-slate-900 focus:border-rose-500/50 focus:ring-4 focus:ring-rose-500/10"
-                    : "bg-white/50 border-gray-200 text-slate-900 placeholder-gray-400 focus:bg-white focus:border-rose-300 focus:ring-4 focus:ring-rose-100",
+                    : "bg-theme-cream-solid/50 border-gray-200 text-slate-900 placeholder-gray-400 focus:bg-theme-cream-solid focus:border-rose-300 focus:ring-4 focus:ring-rose-100",
                 )}
               />
             </div>
@@ -129,7 +132,7 @@ const Signup = () => {
                   "w-full px-4 py-2.5 rounded-xl border-2 focus:outline-none transition-all duration-300 font-medium",
                   theme === "dark"
                     ? "bg-slate-900/50 border-slate-700 text-slate-200 placeholder-slate-500 focus:bg-slate-900 focus:border-rose-500/50 focus:ring-4 focus:ring-rose-500/10"
-                    : "bg-white/50 border-gray-200 text-slate-900 placeholder-gray-400 focus:bg-white focus:border-rose-300 focus:ring-4 focus:ring-rose-100",
+                    : "bg-theme-cream-solid/50 border-gray-200 text-slate-900 placeholder-gray-400 focus:bg-theme-cream-solid focus:border-rose-300 focus:ring-4 focus:ring-rose-100",
                 )}
               />
             </div>
@@ -148,7 +151,7 @@ const Signup = () => {
                   "w-full px-4 py-2.5 rounded-xl border-2 focus:outline-none transition-all duration-300 font-medium",
                   theme === "dark"
                     ? "bg-slate-900/50 border-slate-700 text-slate-200 placeholder-slate-500 focus:bg-slate-900 focus:border-rose-500/50 focus:ring-4 focus:ring-rose-500/10"
-                    : "bg-white/50 border-gray-200 text-slate-900 placeholder-gray-400 focus:bg-white focus:border-rose-300 focus:ring-4 focus:ring-rose-100",
+                    : "bg-theme-cream-solid/50 border-gray-200 text-slate-900 placeholder-gray-400 focus:bg-theme-cream-solid focus:border-rose-300 focus:ring-4 focus:ring-rose-100",
                 )}
               />
             </div>
@@ -168,7 +171,7 @@ const Signup = () => {
                   "w-full px-4 py-2.5 rounded-xl border-2 focus:outline-none transition-all duration-300 font-medium",
                   theme === "dark"
                     ? "bg-slate-900/50 border-slate-700 text-slate-200 placeholder-slate-500 focus:bg-slate-900 focus:border-rose-500/50 focus:ring-4 focus:ring-rose-500/10"
-                    : "bg-white/50 border-gray-200 text-slate-900 placeholder-gray-400 focus:bg-white focus:border-rose-300 focus:ring-4 focus:ring-rose-100",
+                    : "bg-theme-cream-solid/50 border-gray-200 text-slate-900 placeholder-gray-400 focus:bg-theme-cream-solid focus:border-rose-300 focus:ring-4 focus:ring-rose-100",
                 )}
               />
             </div>
@@ -188,7 +191,7 @@ const Signup = () => {
                   "w-full px-4 py-2.5 rounded-xl border-2 focus:outline-none transition-all duration-300 font-medium",
                   theme === "dark"
                     ? "bg-slate-900/50 border-slate-700 text-slate-200 placeholder-slate-500 focus:bg-slate-900 focus:border-rose-500/50 focus:ring-4 focus:ring-rose-500/10"
-                    : "bg-white/50 border-gray-200 text-slate-900 placeholder-gray-400 focus:bg-white focus:border-rose-300 focus:ring-4 focus:ring-rose-100",
+                    : "bg-theme-cream-solid/50 border-gray-200 text-slate-900 placeholder-gray-400 focus:bg-theme-cream-solid focus:border-rose-300 focus:ring-4 focus:ring-rose-100",
                 )}
               />
             </div>

@@ -133,7 +133,7 @@ export default function Topbar({ setMobileMenuOpen }) {
           {showNotifications && (
             <div className={classNames(
               "absolute right-[-100px] sm:right-0 mt-2 w-[calc(100vw-2rem)] sm:w-80 origin-top-right rounded-2xl shadow-xl ring-1 ring-black/5 focus:outline-none transition-all duration-300 z-50 overflow-hidden",
-              theme === "dark" ? "bg-slate-900/95 border border-slate-700/50 backdrop-blur-xl" : "bg-white/95 border border-rose-100/50 backdrop-blur-xl"
+              theme === "dark" ? "bg-slate-900/95 border border-slate-700/50 backdrop-blur-xl" : "bg-theme-cream-solid/95 border border-rose-100/50 backdrop-blur-xl"
             )}>
               <div className={classNames("p-4 py-3 border-b flex justify-between items-center", theme === "dark" ? "border-slate-800" : "border-gray-100")}>
                 <h3 className={classNames("text-sm font-semibold", theme === "dark" ? "text-white" : "text-gray-900")}>Notifications</h3>
@@ -224,7 +224,7 @@ export default function Topbar({ setMobileMenuOpen }) {
           {showProfileMenu && (
             <div className={classNames(
               "absolute right-0 mt-2 w-48 origin-top-right rounded-xl shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none transition-all duration-300 z-50",
-              theme === "dark" ? "bg-slate-900 border border-slate-700" : "bg-white border border-rose-100"
+              theme === "dark" ? "bg-slate-900 border border-slate-700" : "bg-theme-cream-solid border border-rose-100"
             )}>
               <div className={classNames("p-4 border-b", theme === "dark" ? "border-slate-800" : "border-gray-100")}>
                 <p className={classNames("text-sm font-medium", theme === "dark" ? "text-white" : "text-gray-900")}>

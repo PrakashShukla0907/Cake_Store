@@ -91,7 +91,7 @@ const Cart = () => {
         ) : cart.length === 0 ? (
           <div className={classNames(
             "rounded-3xl p-16 text-center border-2 border-dashed transition-colors",
-            theme === "dark" ? "bg-slate-900/50 border-slate-800" : "bg-white border-rose-100"
+            theme === "dark" ? "bg-slate-900/50 border-slate-800" : "bg-theme-cream-solid border-rose-100"
           )}>
             <div className="mx-auto w-20 h-20 bg-rose-50 dark:bg-rose-500/10 rounded-full flex items-center justify-center mb-6">
                <ShoppingBag className="h-10 w-10 text-rose-500 opacity-50" />
@@ -117,7 +117,7 @@ const Cart = () => {
                     "group relative rounded-2xl p-5 transition-all duration-300 border flex flex-col sm:flex-row sm:items-center gap-6",
                     theme === "dark"
                       ? "bg-slate-900 border-slate-800 hover:border-rose-500/30"
-                      : "bg-white border-rose-100 hover:border-rose-300 shadow-sm"
+                      : "bg-theme-cream-solid border-rose-100 hover:border-rose-300 shadow-sm"
                   )}
                 >
                   {/* Product Info */}
@@ -202,7 +202,7 @@ const Cart = () => {
               "rounded-3xl p-8 border backdrop-blur-md relative overflow-hidden",
               theme === "dark"
                 ? "bg-slate-900/80 border-slate-800"
-                : "bg-white border-rose-100 shadow-xl shadow-rose-500/5"
+                : "bg-theme-cream-solid border-rose-100 shadow-xl shadow-rose-500/5"
             )}>
                {/* Background Glow */}
                <div className="absolute -top-24 -right-24 w-48 h-48 bg-rose-500/10 blur-[80px] rounded-full pointer-events-none" />
