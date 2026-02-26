@@ -1,4 +1,26 @@
 import Product from "../models/product.js";
+import { v2 as cloudinary } from "cloudinary";
+
+// Helper function to extract Cloudinary public ID from URL
+const getCloudinaryPublicId = (imageUrl) => {
+  if (!imageUrl) return null;
+  // Example URL: https://res.cloudinary.com/dngrk2bwl/image/upload/v1234567/cakeStore/filename.jpg
+  // We need "cakeStore/filename"
+  try {
+    const parts = imageUrl.split('/');
+    const uploadIndex = parts.indexOf('upload');
+    if (uploadIndex === -1) return null;
+    
+    // Get everything after the version folder (e.g., v1234567)
+    const relativePath = parts.slice(uploadIndex + 2).join('/');
+    // Remove the file extension
+    const publicId = relativePath.split('.')[0];
+    return publicId;
+  } catch (err) {
+    console.error("Error extracting public ID:", err);
+    return null;
+  }
+};
 
 /**
  * CREATE PRODUCT
@@ -90,6 +112,12 @@ export const updateProduct = async (req, res) => {
     if (!product) return res.status(404).json({ message: "Product not found" });
 
     if (req.file) {
+      // Delete old image from Cloudinary if it exists
+      const publicId = getCloudinaryPublicId(product.image);
+      if (publicId) {
+        await cloudinary.uploader.destroy(publicId);
+      }
+      
       req.body.image = req.file.path; // ✅ new image URL
     }
 
@@ -116,11 +144,17 @@ export const deleteProduct = async (req, res) => {
 
     if (!product) return res.status(404).json({ message: "Product not found" });
 
+    // Delete image from Cloudinary
+    const publicId = getCloudinaryPublicId(product.image);
+    if (publicId) {
+      await cloudinary.uploader.destroy(publicId);
+    }
+
     await product.deleteOne();
 
     res.status(200).json({
       success: true,
-      message: "Product deleted successfully",
+      message: "Product and image deleted successfully",
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

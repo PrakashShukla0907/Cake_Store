@@ -5,7 +5,7 @@ export const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find()
       .populate("user", "name phone email")
-      .populate("items.product", "name price")
+      .populate("items.product", "name price image")
       .sort({ createdAt: -1 });
 
     res.json({
@@ -25,7 +25,7 @@ export const getAllOrders = async (req, res) => {
 /* ================= UPDATE ORDER STATUS ================= */
 export const updateOrderStatus = async (req, res) => {
   try {
-    const { orderId } = req.params;
+    const { id } = req.params;
     const { status } = req.body;
 
     const allowedStatus = [
@@ -33,6 +33,7 @@ export const updateOrderStatus = async (req, res) => {
       "Baking",
       "Out for Delivery",
       "Delivered",
+      "Cancelled",
     ];
 
     if (!allowedStatus.includes(status)) {
@@ -42,7 +43,7 @@ export const updateOrderStatus = async (req, res) => {
       });
     }
 
-    const order = await Order.findById(orderId);
+    const order = await Order.findById(id);
 
     if (!order) {
       return res.status(404).json({

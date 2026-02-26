@@ -1,15 +1,21 @@
 import User from "../models/user.js";
 import Order from "../models/orders.js";
+import Notification from "../models/notification.js";
 
 /* ================= PLACE ORDER ================= */
 export const placeOrder = async (req, res) => {
   try {
-    const { address, lat, lng, paymentMethod = "Cash on Delivery" } = req.body;
+    const { 
+      address, 
+      lat = 0, 
+      lng = 0, 
+      paymentMethod = "Cash on Delivery" 
+    } = req.body;
 
-    if (!address || lat == null || lng == null) {
+    if (!address) {
       return res.status(400).json({
         success: false,
-        message: "Delivery address and location are required",
+        message: "Delivery address is required",
       });
     }
 
@@ -42,6 +48,13 @@ export const placeOrder = async (req, res) => {
         lng,
       },
       paymentMethod,
+    });
+
+    // Generate Admin Notification
+    await Notification.create({
+      type: "New Order",
+      message: `A new order of ₹${totalAmount.toFixed(2)} has been placed by ${user.name}.`,
+      data: { orderId: order._id }
     });
 
     // Clear cart after order
