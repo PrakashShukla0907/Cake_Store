@@ -58,86 +58,55 @@ export default function Home() {
   return (
     <div
       className={classNames(
-        "min-h-screen pb-12",
+        "min-h-screen pb-12 transition-colors duration-300",
         theme === "dark"
-          ? "bg-[#2B1B17] text-[#E5D3C5]"
-          : "bg-[#F9F1E7] text-[#4A3728]",
+          ? "bg-slate-900 text-slate-200"
+          : "bg-gradient-to-br from-rose-50 via-pink-50 to-rose-100 text-slate-800",
       )}
     >
-      {/* Hero Section */}
-      <div
-        className={classNames(
-          "py-12 px-4",
-          theme === "dark"
-            ? "bg-linear-to-r  from-amber-900 to-orange-900"
-            : "bg-linear-to-r  from-pink-500 to-orange-500",
-        )}
-      >
-        <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">
-            🍰 Welcome to CakeStore
-          </h1>
-          <p className="text-xl text-white/90 mb-8">
-            Delicious homemade cakes crafted with love
-          </p>
-
-          {/* Search Bar */}
-          <div className="max-w-md mx-auto">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search cakes..."
-                value={searchQuery}
-                onChange={(e) => handleSearch(e.target.value)}
-                className={classNames(
-                  "w-full px-4 py-3 pl-12 rounded-lg border-2 focus:outline-none transition",
-                  theme === "dark"
-                    ? "bg-[#3A2A25] border-[#B97A6A] text-[#E5D3C5] placeholder-[#9D6A5A]"
-                    : "bg-white border-pink-300 text-gray-800 placeholder-gray-400",
-                )}
-              />
-              <FaSearch className="absolute left-4 top-4 text-lg opacity-50" />
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Products Section */}
-      <div className="max-w-6xl mx-auto px-4 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
-            {error}
+          <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800/50 text-red-600 dark:text-red-400 px-4 py-3 rounded-xl mb-8 font-medium shadow-sm flex items-center gap-2">
+            <span className="shrink-0">⚠️</span> {error}
           </div>
         )}
 
         {loading ? (
-          <div className="text-center py-16">
-            <p className="text-xl opacity-70">Loading delicious cakes... 🔄</p>
+          <div className="text-center py-20 flex flex-col items-center justify-center space-y-4">
+            <div className="w-12 h-12 border-4 border-rose-200 border-t-rose-500 rounded-full animate-spin"></div>
+            <p className="text-xl font-medium opacity-70">Loading delicious cakes...</p>
           </div>
         ) : products.length === 0 ? (
-          <div className="text-center py-16">
-            <p className="text-2xl mb-4">😢 No cakes found</p>
-            <p className="opacity-70">
+          <div className="text-center py-24 bg-white/50 dark:bg-slate-800/10 backdrop-blur-sm rounded-3xl border border-white/50 dark:border-slate-700 shadow-xl">
+            <p className="text-5xl mb-6">😢</p>
+            <h3 className="text-2xl font-bold mb-2">No cakes found</h3>
+            <p className="opacity-70 font-medium">
               {searchQuery
-                ? "Try a different search term"
-                : "Come back soon for fresh cakes!"}
+                ? `We couldn't find any cakes matching "${searchQuery}"`
+                : "Check back soon for freshly baked goods!"}
             </p>
           </div>
         ) : (
           <>
-            <h2
-              className={classNames(
-                "text-3xl font-bold mb-8",
-                theme === "dark" ? "text-[#B97A6A]" : "text-[#4A3728]",
-              )}
-            >
-              {searchQuery
-                ? `Search Results for "${searchQuery}"`
-                : "Featured Cakes"}
-            </h2>
+            <div className="mb-10 flex items-center justify-between">
+              <h2
+                className={classNames(
+                  "text-3xl sm:text-4xl font-extrabold tracking-tight",
+                  theme === "dark" 
+                    ? "text-white" 
+                    : "bg-gradient-to-r from-rose-500 to-pink-600 bg-clip-text text-transparent"
+                )}
+              >
+                {searchQuery
+                  ? `Results for "${searchQuery}"`
+                  : "Featured Cakes"}
+              </h2>
+            </div>
 
             {/* Products Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8 mb-16">
               {products.map((product) => (
                 <ProductCard key={product._id} product={product} />
               ))}
@@ -145,18 +114,18 @@ export default function Home() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex justify-center items-center gap-2 flex-wrap">
+              <div className="flex justify-center items-center gap-2 flex-wrap mt-8">
                 {currentPage > 1 && (
                   <button
                     onClick={() => handlePageChange(currentPage - 1)}
                     className={classNames(
-                      "px-4 py-2 rounded-lg font-semibold transition",
+                      "px-4 py-2.5 rounded-xl font-bold transition-all shadow-sm hover:shadow-md transform hover:-translate-y-0.5",
                       theme === "dark"
-                        ? "bg-[#B97A6A] text-[#E5D3C5] hover:bg-[#9D6A5A]"
-                        : "bg-pink-500 text-white hover:bg-pink-600",
+                        ? "bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700"
+                        : "bg-white text-slate-700 hover:text-rose-600 border border-rose-100 hover:border-rose-200",
                     )}
                   >
-                    ← Previous
+                    ← Prev
                   </button>
                 )}
 
@@ -166,14 +135,14 @@ export default function Home() {
                       key={page}
                       onClick={() => handlePageChange(page)}
                       className={classNames(
-                        "px-3 py-2 rounded-lg font-semibold transition",
+                        "w-10 h-10 flex items-center justify-center rounded-xl font-bold transition-all shadow-sm",
                         currentPage === page
                           ? theme === "dark"
-                            ? "bg-[#B97A6A] text-[#E5D3C5]"
-                            : "bg-pink-600 text-white"
+                            ? "bg-rose-500 text-white shadow-rose-900/20"
+                            : "bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-rose-200"
                           : theme === "dark"
-                            ? "bg-[#3A2A25] text-[#E5D3C5] hover:bg-[#4A3A35]"
-                            : "bg-gray-200 text-gray-800 hover:bg-gray-300",
+                            ? "bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700"
+                            : "bg-white text-slate-600 hover:text-rose-600 hover:bg-rose-50 border border-gray-100",
                       )}
                     >
                       {page}
@@ -185,10 +154,10 @@ export default function Home() {
                   <button
                     onClick={() => handlePageChange(currentPage + 1)}
                     className={classNames(
-                      "px-4 py-2 rounded-lg font-semibold transition",
+                      "px-4 py-2.5 rounded-xl font-bold transition-all shadow-sm hover:shadow-md transform hover:-translate-y-0.5",
                       theme === "dark"
-                        ? "bg-[#B97A6A] text-[#E5D3C5] hover:bg-[#9D6A5A]"
-                        : "bg-pink-500 text-white hover:bg-pink-600",
+                        ? "bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700"
+                        : "bg-white text-slate-700 hover:text-rose-600 border border-rose-100 hover:border-rose-200",
                     )}
                   >
                     Next →

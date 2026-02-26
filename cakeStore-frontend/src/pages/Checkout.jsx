@@ -3,6 +3,19 @@ import { placeOrder } from "../api/order.api";
 import { getCart } from "../api/cart.api";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import { 
+  CreditCard, 
+  Truck, 
+  MapPin, 
+  User, 
+  Mail, 
+  Phone, 
+  ShoppingBag, 
+  ArrowRight, 
+  CheckCircle2, 
+  Info,
+  Hash
+} from "lucide-react";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -50,18 +63,20 @@ const Checkout = () => {
     setError("");
 
     try {
-      const shippingAddress = `${formData.address}, ${formData.city}, ${formData.state} ${formData.postalCode}`;
+      const address = `${formData.address}, ${formData.city}, ${formData.state} - ${formData.postalCode}`;
 
       await placeOrder({
-        shippingAddress,
-        customerName: formData.fullName,
-        customerEmail: formData.email,
-        customerPhone: formData.phone,
+        address,
+        // lat/lng are required by backend but not collected here yet, 
+        // passing 0 for now or I will update backend to make them optional
+        lat: 0,
+        lng: 0,
+        paymentMethod: "Cash on Delivery"
       });
 
       setSuccess(true);
       setTimeout(() => {
-        navigate("/my-orders");
+        navigate("/orders");
       }, 2000);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to place order");
@@ -88,21 +103,22 @@ const Checkout = () => {
   return (
     <div
       className={classNames(
-        "min-h-screen pb-12",
-        theme === "dark"
-          ? "bg-[#2B1B17] text-[#E5D3C5]"
-          : "bg-[#F9F1E7] text-[#4A3728]",
+        "min-h-screen pb-16 transition-colors duration-500",
+        theme === "dark" ? "bg-slate-950 text-slate-100" : "bg-[#FFF9F9] text-slate-800"
       )}
     >
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h2
-          className={classNames(
-            "text-3xl sm:text-4xl font-bold mb-8",
-            theme === "dark" ? "text-[#B97A6A]" : "text-[#4A3728]",
-          )}
-        >
-          🧾 Checkout
-        </h2>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="flex items-center gap-3 mb-10">
+          <div className="p-3 rounded-2xl bg-rose-500 text-white shadow-lg shadow-rose-500/20">
+            <CreditCard className="h-6 w-6" />
+          </div>
+          <h2 className={classNames(
+            "text-3xl font-black tracking-tight",
+            theme === "dark" ? "text-white" : "text-slate-900"
+          )}>
+            Checkout
+          </h2>
+        </div>
 
         {success && (
           <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6">
@@ -116,161 +132,164 @@ const Checkout = () => {
           </div>
         )}
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-3 gap-10">
           {/* Checkout Form */}
-          <div className="md:col-span-2">
+          <div className="lg:col-span-2 space-y-8">
             <div
               className={classNames(
-                "rounded-lg p-8 mb-8",
+                "rounded-3xl p-8 border backdrop-blur-md relative overflow-hidden",
                 theme === "dark"
-                  ? "bg-[#3A2A25]"
-                  : "bg-white border border-gray-200",
+                  ? "bg-slate-900/80 border-slate-800"
+                  : "bg-white border-rose-100 shadow-xl shadow-rose-500/5",
               )}
             >
-              <h3 className="text-2xl font-bold mb-6">Shipping Information</h3>
+              <div className="flex items-center gap-2 mb-8">
+                 <Truck className="h-5 w-5 text-rose-500" />
+                 <h3 className="text-xl font-black uppercase tracking-tight">Shipping Information</h3>
+              </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Personal Info */}
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold mb-2">
-                      Full Name *
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-2 text-xs font-black uppercase tracking-widest opacity-60 ml-1">
+                      <User className="h-3 w-3" /> Full Name
                     </label>
                     <input
                       type="text"
                       name="fullName"
-                      placeholder="John Doe"
+                      placeholder="Enter your full name"
                       value={formData.fullName}
                       onChange={handleChange}
                       required
                       className={classNames(
-                        "w-full px-4 py-2 rounded-lg border-2 focus:outline-none transition",
+                        "w-full px-5 py-3.5 rounded-2xl border-2 outline-none transition-all font-bold",
                         theme === "dark"
-                          ? "bg-[#2B1B17] border-[#B97A6A] text-[#E5D3C5]"
-                          : "bg-gray-50 border-gray-300 text-gray-900",
+                          ? "bg-slate-950 border-slate-800 text-white focus:border-rose-500/50 focus:ring-4 focus:ring-rose-500/10 placeholder:text-slate-700"
+                          : "bg-gray-50 border-rose-50 text-slate-900 focus:bg-white focus:border-rose-300 focus:ring-4 focus:ring-rose-500/5 placeholder:text-slate-300",
                       )}
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold mb-2">
-                      Email *
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-2 text-xs font-black uppercase tracking-widest opacity-60 ml-1">
+                      <Mail className="h-3 w-3" /> Email Address
                     </label>
                     <input
                       type="email"
                       name="email"
-                      placeholder="your@email.com"
+                      placeholder="Enter your email address"
                       value={formData.email}
                       onChange={handleChange}
                       required
                       className={classNames(
-                        "w-full px-4 py-2 rounded-lg border-2 focus:outline-none transition",
+                        "w-full px-5 py-3.5 rounded-2xl border-2 outline-none transition-all font-bold",
                         theme === "dark"
-                          ? "bg-[#2B1B17] border-[#B97A6A] text-[#E5D3C5]"
-                          : "bg-gray-50 border-gray-300 text-gray-900",
+                          ? "bg-slate-950 border-slate-800 text-white focus:border-rose-500/50 focus:ring-4 focus:ring-rose-500/10 placeholder:text-slate-700"
+                          : "bg-gray-50 border-rose-50 text-slate-900 focus:bg-white focus:border-rose-300 focus:ring-4 focus:ring-rose-500/5 placeholder:text-slate-300",
                       )}
                     />
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-semibold mb-2">
-                    Phone Number *
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-xs font-black uppercase tracking-widest opacity-60 ml-1">
+                    <Phone className="h-3 w-3" /> Phone Number
                   </label>
                   <input
                     type="tel"
                     name="phone"
-                    placeholder="9xxxxxxxxx"
+                    placeholder="Enter your 10-digit phone number"
                     value={formData.phone}
                     onChange={handleChange}
                     required
                     className={classNames(
-                      "w-full px-4 py-2 rounded-lg border-2 focus:outline-none transition",
+                      "w-full px-5 py-3.5 rounded-2xl border-2 outline-none transition-all font-bold",
                       theme === "dark"
-                        ? "bg-[#2B1B17] border-[#B97A6A] text-[#E5D3C5]"
-                        : "bg-gray-50 border-gray-300 text-gray-900",
+                        ? "bg-slate-950 border-slate-800 text-white focus:border-rose-500/50 focus:ring-4 focus:ring-rose-500/10 placeholder:text-slate-700"
+                        : "bg-gray-50 border-rose-50 text-slate-900 focus:bg-white focus:border-rose-300 focus:ring-4 focus:ring-rose-500/5 placeholder:text-slate-300",
                     )}
                   />
                 </div>
 
                 {/* Address */}
-                <div>
-                  <label className="block text-sm font-semibold mb-2">
-                    Street Address *
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-xs font-black uppercase tracking-widest opacity-60 ml-1">
+                    <MapPin className="h-3 w-3" /> Street Address
                   </label>
                   <input
                     type="text"
                     name="address"
-                    placeholder="123 Main Street"
+                    placeholder="Enter your complete street address"
                     value={formData.address}
                     onChange={handleChange}
                     required
                     className={classNames(
-                      "w-full px-4 py-2 rounded-lg border-2 focus:outline-none transition",
+                      "w-full px-5 py-3.5 rounded-2xl border-2 outline-none transition-all font-bold",
                       theme === "dark"
-                        ? "bg-[#2B1B17] border-[#B97A6A] text-[#E5D3C5]"
-                        : "bg-gray-50 border-gray-300 text-gray-900",
+                        ? "bg-slate-950 border-slate-800 text-white focus:border-rose-500/50 focus:ring-4 focus:ring-rose-500/10 placeholder:text-slate-700"
+                        : "bg-gray-50 border-rose-50 text-slate-900 focus:bg-white focus:border-rose-300 focus:ring-4 focus:ring-rose-500/5 placeholder:text-slate-300",
                     )}
                   />
                 </div>
 
-                <div className="grid md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold mb-2">
-                      City *
+                <div className="grid md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <label className="block text-xs font-black uppercase tracking-widest opacity-60 ml-1">
+                      City
                     </label>
                     <input
                       type="text"
                       name="city"
-                      placeholder="New York"
+                      placeholder="Enter your city"
                       value={formData.city}
                       onChange={handleChange}
                       required
                       className={classNames(
-                        "w-full px-4 py-2 rounded-lg border-2 focus:outline-none transition",
+                        "w-full px-5 py-3.5 rounded-2xl border-2 outline-none transition-all font-bold",
                         theme === "dark"
-                          ? "bg-[#2B1B17] border-[#B97A6A] text-[#E5D3C5]"
-                          : "bg-gray-50 border-gray-300 text-gray-900",
+                          ? "bg-slate-950 border-slate-800 text-white focus:border-rose-500/50 focus:ring-4 focus:ring-rose-500/10 placeholder:text-slate-700"
+                          : "bg-gray-50 border-rose-50 text-slate-900 focus:bg-white focus:border-rose-300 focus:ring-4 focus:ring-rose-500/5 placeholder:text-slate-300",
                       )}
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold mb-2">
-                      State *
+                  <div className="space-y-2">
+                    <label className="block text-xs font-black uppercase tracking-widest opacity-60 ml-1">
+                      State
                     </label>
                     <input
                       type="text"
                       name="state"
-                      placeholder="NY"
+                      placeholder="Enter your state"
                       value={formData.state}
                       onChange={handleChange}
                       required
                       className={classNames(
-                        "w-full px-4 py-2 rounded-lg border-2 focus:outline-none transition",
+                        "w-full px-5 py-3.5 rounded-2xl border-2 outline-none transition-all font-bold",
                         theme === "dark"
-                          ? "bg-[#2B1B17] border-[#B97A6A] text-[#E5D3C5]"
-                          : "bg-gray-50 border-gray-300 text-gray-900",
+                          ? "bg-slate-950 border-slate-800 text-white focus:border-rose-500/50 focus:ring-4 focus:ring-rose-500/10 placeholder:text-slate-700"
+                          : "bg-gray-50 border-rose-50 text-slate-900 focus:bg-white focus:border-rose-300 focus:ring-4 focus:ring-rose-500/5 placeholder:text-slate-300",
                       )}
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold mb-2">
-                      Postal Code *
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-2 text-xs font-black uppercase tracking-widest opacity-60 ml-1">
+                      <Hash className="h-3 w-3" /> ZIP Code
                     </label>
                     <input
                       type="text"
                       name="postalCode"
-                      placeholder="10001"
+                      placeholder="Enter six digit ZIP code"
                       value={formData.postalCode}
                       onChange={handleChange}
                       required
                       className={classNames(
-                        "w-full px-4 py-2 rounded-lg border-2 focus:outline-none transition",
+                        "w-full px-5 py-3.5 rounded-2xl border-2 outline-none transition-all font-bold",
                         theme === "dark"
-                          ? "bg-[#2B1B17] border-[#B97A6A] text-[#E5D3C5]"
-                          : "bg-gray-50 border-gray-300 text-gray-900",
+                          ? "bg-slate-950 border-slate-800 text-white focus:border-rose-500/50 focus:ring-4 focus:ring-rose-500/10 placeholder:text-slate-700"
+                          : "bg-gray-50 border-rose-50 text-slate-900 focus:bg-white focus:border-rose-300 focus:ring-4 focus:ring-rose-500/5 placeholder:text-slate-300",
                       )}
                     />
                   </div>
@@ -278,17 +297,17 @@ const Checkout = () => {
 
                 <div
                   className={classNames(
-                    "p-4 rounded-lg border-l-4",
+                    "p-5 rounded-2xl border flex flex-col gap-2",
                     theme === "dark"
-                      ? "bg-[#2B1B17] border-[#B97A6A]"
-                      : "bg-blue-50 border-blue-500",
+                      ? "bg-emerald-500/5 border-emerald-500/10 text-emerald-400"
+                      : "bg-emerald-50 border-emerald-100 text-emerald-700",
                   )}
                 >
-                  <p className="text-sm">
-                    ✓ Your information is safe and secure
+                  <p className="text-xs font-bold flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4" /> Your information is protected with SSL encryption
                   </p>
-                  <p className="text-sm">
-                    ✓ We offer free delivery on all orders
+                  <p className="text-xs font-bold flex items-center gap-2">
+                    <Truck className="h-4 w-4" /> We offer super fast free delivery on all orders
                   </p>
                 </div>
 
@@ -296,69 +315,91 @@ const Checkout = () => {
                   type="submit"
                   disabled={!isFormValid || loading}
                   className={classNames(
-                    "w-full py-3 rounded-lg font-bold text-lg transition",
+                    "w-full py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-3 transform active:scale-[0.98]",
                     isFormValid && !loading
-                      ? theme === "dark"
-                        ? "bg-green-600 text-white hover:bg-green-700"
-                        : "bg-green-500 text-white hover:bg-green-600"
-                      : "bg-gray-400 text-gray-600 cursor-not-allowed",
+                      ? "bg-rose-500 text-white hover:bg-rose-600 shadow-rose-500/25 cursor-pointer"
+                      : "bg-gray-100 dark:bg-slate-800 text-gray-400 dark:text-slate-600 cursor-not-allowed",
                   )}
                 >
-                  {loading ? "🔄 Processing..." : "✓ Place Order"}
+                  {loading ? (
+                    <><div className="animate-spin h-5 w-5 border-2 border-white/30 border-t-white rounded-full" /> Processing...</>
+                  ) : (
+                    <><CheckCircle2 className="h-5 w-5" /> Place Order</>
+                  )}
                 </button>
               </form>
             </div>
           </div>
 
           {/* Order Summary */} 
-          <div>
+          <div className="lg:col-span-1">
             <div
               className={classNames(
-                "rounded-lg p-8 sticky top-20",
+                "rounded-3xl p-8 sticky top-24 border backdrop-blur-md relative overflow-hidden",
                 theme === "dark"
-                  ? "bg-[#3A2A25]"
-                  : "bg-white border border-gray-200",
+                  ? "bg-slate-900 border-slate-800"
+                  : "bg-white border-rose-100 shadow-2xl shadow-rose-500/5",
               )}
             >
-              <h3 className="text-2xl font-bold mb-6">Order Summary</h3>
+               {/* Background Glow */}
+               <div className="absolute -top-24 -right-24 w-40 h-40 bg-rose-500/10 blur-[60px] rounded-full pointer-events-none" />
 
-              <div className="space-y-4 mb-6 max-h-64 overflow-y-auto">
+               <div className="flex items-center gap-2 mb-8">
+                  <ShoppingBag className="h-5 w-5 text-rose-500" />
+                  <h3 className="text-xl font-black uppercase tracking-tight">Order Summary</h3>
+               </div>
+
+              <div className="space-y-4 mb-8 max-h-[40vh] overflow-y-auto pr-2 scrollbar-thin">
                 {cart.map((item) => (
                   <div
                     key={item.productId._id}
-                    className="flex justify-between text-sm pb-3 border-b opacity-75"
+                    className="flex justify-between items-start gap-4 pb-4 border-b border-rose-50 dark:border-slate-800 group"
                   >
-                    <div>
-                      <p className="font-semibold">{item.productId.name}</p>
-                      <p
-                        className={
-                          theme === "dark" ? "text-[#D4C5B9]" : "text-gray-600"
-                        }
-                      >
-                        ✕ {item.quantity}
+                    <div className="flex-1">
+                      <p className="font-bold text-sm group-hover:text-rose-500 transition-colors">{item.productId.name}</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mt-1">
+                        Qty: {item.quantity} × ₹{item.productId.price}
                       </p>
                     </div>
-                    <p className="font-semibold text-pink-600">
+                    <p className="font-black text-rose-500 text-sm">
                       ₹{(item.productId.price * item.quantity).toFixed(2)}
                     </p>
                   </div>
                 ))}
               </div>
 
-              <div className="space-y-2 pb-4 border-b">
-                <div className="flex justify-between">
-                  <span>Subtotal</span>
-                  <span className="font-semibold">₹{total.toFixed(2)}</span>
+              <div className="space-y-4 mb-8">
+                <div className="flex justify-between items-center opacity-60">
+                  <span className="text-xs font-black uppercase tracking-widest">Subtotal</span>
+                  <span className="text-sm font-bold">₹{total.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-green-600">
-                  <span>Shipping</span>
-                  <span className="font-semibold">Free</span>
+                <div className="flex justify-between items-center bg-emerald-50 dark:bg-emerald-500/10 px-4 py-2 rounded-xl border border-emerald-100 dark:border-emerald-500/20">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Shipping</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Free</span>
                 </div>
               </div>
 
-              <div className="flex justify-between mt-4 text-2xl font-bold">
-                <span>Total</span>
-                <span className="text-pink-600">₹{total.toFixed(2)}</span>
+              <div className="pt-6 border-t border-slate-200 dark:border-slate-800">
+                <div className="flex justify-between items-end">
+                  <div className="flex flex-col">
+                     <span className="text-[10px] font-black uppercase tracking-[3px] opacity-40 mb-1">Total Amount</span>
+                     <span className="text-3xl font-black text-rose-500">
+                        ₹{total.toFixed(2)}
+                     </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 flex flex-col gap-4">
+                  <div className="flex items-center gap-2 text-[10px] font-bold opacity-50 justify-center">
+                     <Info className="h-3 w-3" /> All taxes included
+                  </div>
+                  <button 
+                    onClick={() => navigate("/cart")}
+                    className="text-xs font-bold uppercase tracking-widest text-center hover:text-rose-500 transition-colors opacity-60 hover:opacity-100"
+                  >
+                    ← Back to Cart
+                  </button>
               </div>
             </div>
           </div>
