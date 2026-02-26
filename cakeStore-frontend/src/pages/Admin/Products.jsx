@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useTheme } from "../../context/ThemeContext";
-import { Plus, Search, Edit2, Trash2, Image as ImageIcon, X } from "lucide-react";
+import { Plus, Search, Edit2, Trash2, Image as ImageIcon, X, Loader2 } from "lucide-react";
 import { getAdminProducts, deleteAdminProduct, createAdminProduct, updateAdminProduct } from "../../api/admin.api";
 import ConfirmModal from "../../components/Admin/ConfirmModal";
 
@@ -12,6 +12,7 @@ export default function AdminProducts() {
   const { theme } = useTheme();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   
   // Modal State
@@ -91,6 +92,7 @@ export default function AdminProducts() {
   const handleSaveProduct = async (e) => {
     e.preventDefault();
     try {
+      setSubmitting(true);
       const formData = new FormData();
       formData.append("name", newProduct.name);
       formData.append("description", newProduct.description);
@@ -102,6 +104,7 @@ export default function AdminProducts() {
         formData.append("image", newProduct.image);
       } else if (!editingId) {
         alert("Please select an image to upload");
+        setSubmitting(false);
         return;
       }
 
@@ -118,6 +121,8 @@ export default function AdminProducts() {
     } catch (err) {
       console.error("Failed to save product:", err);
       alert("Error saving product. Check console.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -157,14 +162,24 @@ export default function AdminProducts() {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
           <div className={classNames(
-            "w-full max-w-md rounded-2xl shadow-xl border p-6 max-h-[90vh] overflow-y-auto",
+            "w-full max-w-md rounded-2xl shadow-xl border max-h-[90vh] overflow-hidden flex flex-col",
             theme === "dark" ? "bg-slate-900 border-slate-700" : "bg-white border-rose-100"
           )}>
+            {/* Loading Bar */}
+            <div className="relative h-1 w-full overflow-hidden rounded-t-2xl bg-transparent">
+              {submitting && (
+                <div 
+                  className="absolute h-full bg-rose-500 rounded-full"
+                  style={{ animation: "loadingBar 1.5s ease-in-out infinite" }}
+                />
+              )}
+            </div>
+            <div className="p-6 overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
               <h3 className={classNames("text-xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")}>
                 {editingId ? "Edit Product" : "Add New Product"}
               </h3>
-              <button onClick={() => setIsModalOpen(false)} className={classNames("p-1 rounded transition-colors", theme === "dark" ? "hover:bg-slate-800 text-slate-400" : "hover:bg-rose-50 text-gray-500")}>
+              <button onClick={() => !submitting && setIsModalOpen(false)} disabled={submitting} className={classNames("p-1 rounded transition-colors", theme === "dark" ? "hover:bg-slate-800 text-slate-400" : "hover:bg-rose-50 text-gray-500", submitting && "opacity-40 cursor-not-allowed")}>
                 <X className="h-6 w-6" />
               </button>
             </div>
@@ -244,14 +259,24 @@ export default function AdminProducts() {
               </div>
               
               <div className="mt-6">
-                <button type="submit" className={classNames(
-                  "w-full flex justify-center py-2.5 px-4 rounded-xl shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors",
-                  theme === "dark" ? "bg-rose-500 text-white hover:bg-rose-400 focus:ring-rose-500 focus:ring-offset-slate-900" : "bg-rose-500 text-white hover:bg-rose-600 focus:ring-rose-500"
-                )}>
-                  Save Product
+                <button 
+                  type="submit" 
+                  disabled={submitting}
+                  className={classNames(
+                    "w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors",
+                    theme === "dark" ? "bg-rose-500 text-white hover:bg-rose-400 focus:ring-rose-500 focus:ring-offset-slate-900" : "bg-rose-500 text-white hover:bg-rose-600 focus:ring-rose-500",
+                    submitting && "opacity-75 cursor-not-allowed"
+                  )}
+                >
+                  {submitting ? (
+                    <><Loader2 className="h-4 w-4 animate-spin" /> {editingId ? "Updating..." : "Adding Product..."}</>
+                  ) : (
+                    editingId ? "Save Changes" : "Add Product"
+                  )}
                 </button>
               </div>
             </form>
+            </div>
           </div>
         </div>
       )}

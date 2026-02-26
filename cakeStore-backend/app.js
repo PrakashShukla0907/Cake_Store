@@ -49,6 +49,11 @@ app.get("/", (req, res) => {
   res.send("Bakery API v1 is running 🚀");
 });
 
+// ---------- HEALTH CHECK ----------
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "OK" });
+});
+
 // ---------- API v1 ----------
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/products", storeRoutes);

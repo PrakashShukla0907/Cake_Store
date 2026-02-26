@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { getBanners, addBanner, removeBanner } from "../../api/banner.api";
 import { useTheme } from "../../context/ThemeContext";
 import ConfirmModal from "../../components/Admin/ConfirmModal";
-import { Image as ImageIcon, Plus, Trash2, Loader2 } from "lucide-react";
+import { Image as ImageIcon, Plus, Trash2, Loader2, X } from "lucide-react";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -147,6 +147,60 @@ const AdminBanners = () => {
                 </div>
             )}
 
+            {/* Upload Progress Bar */}
+            {uploading && (
+                <div className={classNames(
+                    "rounded-xl overflow-hidden h-1.5 w-full",
+                    theme === "dark" ? "bg-slate-700" : "bg-rose-100"
+                )}>
+                    <div 
+                        className="h-full bg-rose-500 rounded-xl"
+                        style={{ animation: "loadingBar 1.5s ease-in-out infinite" }}
+                    />
+                </div>
+            )}
+
+            {/* Pending Upload Preview — always visible when a file is selected */}
+            {previewUrl && (
+                <div className={classNames(
+                    "group relative overflow-hidden rounded-2xl border-2 border-dashed transition-all duration-300 h-56 sm:h-64",
+                    theme === "dark" 
+                        ? "bg-slate-900/80 border-rose-500/50" 
+                        : "bg-rose-50/50 border-rose-400/50"
+                )}>
+                    {/* Blurred backdrop */}
+                    <div className="absolute inset-0 overflow-hidden">
+                        <img src={previewUrl} alt="" className="w-full h-full object-cover scale-110 opacity-40 blur-xl saturate-150" aria-hidden="true" />
+                        <div className="absolute inset-0 bg-black/40 z-10" />
+                    </div>
+                    
+                    <div className="relative z-20 h-full w-full flex flex-col items-center justify-center p-6 text-center">
+                        <p className="text-white text-xs font-bold uppercase tracking-widest mb-4 bg-rose-500 px-3 py-1 rounded-full shadow-lg">
+                            New Banner Preview
+                        </p>
+                        <img src={previewUrl} alt="Preview Selection" className="h-24 w-auto object-contain mb-4 drop-shadow-xl" />
+                        <div className="flex gap-2 w-full justify-center">
+                            <button 
+                                onClick={handleUpload}
+                                disabled={uploading}
+                                className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg flex items-center gap-1.5 transition-all disabled:opacity-50"
+                            >
+                                {uploading ? <Loader2 className="h-3 w-3 animate-spin"/> : <Plus className="h-3 w-3"/>}
+                                {uploading ? "Uploading..." : "Confirm Upload"}
+                            </button>
+                            <button 
+                                onClick={handleCancelSelection}
+                                disabled={uploading}
+                                className="bg-white/20 hover:bg-white/30 backdrop-blur-md text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all disabled:opacity-50"
+                            >
+                                <X className="h-3 w-3"/> Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Banner Grid / Empty State */}
             {loading && banners.length === 0 ? (
                 <div className={classNames(
                     "flex flex-col items-center justify-center p-20 rounded-xl border shadow-sm transition-colors duration-300",
@@ -155,7 +209,7 @@ const AdminBanners = () => {
                     <div className="h-10 w-10 animate-spin rounded-full border-4 border-rose-500 border-t-transparent mb-4"></div>
                     <p className={theme === "dark" ? "text-theme-dark-muted" : "text-theme-light-muted"}>Loading banners...</p>
                 </div>
-            ) : banners.length === 0 ? (
+            ) : banners.length === 0 && !previewUrl ? (
                 <div className={classNames(
                     "flex flex-col items-center justify-center p-20 rounded-xl border shadow-sm transition-colors duration-300",
                     theme === "dark" ? "bg-theme-dark-card border-theme-dark-border" : "bg-theme-light-card border-theme-light-border"
@@ -171,44 +225,8 @@ const AdminBanners = () => {
                         Upload a landscape image to act as the global promotional banner carousel.
                     </p>
                 </div>
-            ) : (
+            ) : banners.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {/* Pending Upload Preview Card */}
-                    {previewUrl && (
-                        <div className={classNames(
-                            "group relative overflow-hidden rounded-2xl border-2 border-dashed transition-all duration-300 transform scale-[1.02] h-48 sm:h-56",
-                            theme === "dark" 
-                                ? "bg-slate-900/80 border-rose-500/50" 
-                                : "bg-rose-50/50 border-rose-400/50"
-                        )}>
-                            <div className="absolute inset-0 overflow-hidden">
-                                <img src={previewUrl} alt="" className="w-full h-full object-cover scale-110 opacity-40 blur-xl saturate-150" aria-hidden="true" />
-                                <div className="absolute inset-0 bg-black/40 z-10" />
-                            </div>
-                            
-                            <div className="relative z-20 h-full w-full flex flex-col items-center justify-center p-6 text-center">
-                                <p className="text-white text-xs font-bold uppercase tracking-widest mb-4 bg-rose-500 px-3 py-1 rounded-full shadow-lg">New Banner Preview</p>
-                                <img src={previewUrl} alt="Preview Selection" className="h-24 w-auto object-contain mb-4 drop-shadow-xl" />
-                                <div className="flex gap-2 w-full justify-center">
-                                    <button 
-                                        onClick={handleUpload}
-                                        disabled={uploading}
-                                        className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg flex items-center gap-1.5 transition-all disabled:opacity-50"
-                                    >
-                                        {uploading ? <Loader2 className="h-3 w-3 animate-spin"/> : <Plus className="h-3 w-3"/>}
-                                        {uploading ? "Uploading..." : "Confirm Upload"}
-                                    </button>
-                                    <button 
-                                        onClick={handleCancelSelection}
-                                        disabled={uploading}
-                                        className="bg-white/20 hover:bg-white/30 backdrop-blur-md text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all disabled:opacity-50"
-                                    >
-                                        <X className="h-3 w-3"/> Cancel
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
                     {banners.map((banner, index) => (
                         <div key={banner._id} className={classNames(
                             "rounded-xl overflow-hidden shadow-sm border relative group transition-colors duration-300 h-48 sm:h-56 flex items-center justify-center",
@@ -248,7 +266,8 @@ const AdminBanners = () => {
                         </div>
                     ))}
                 </div>
-            )}
+            ) : null}
+
             {/* Custom Confirm Delete Modal */}
             <ConfirmModal 
                 isOpen={deleteModal.isOpen}
