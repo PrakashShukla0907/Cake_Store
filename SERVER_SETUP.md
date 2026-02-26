@@ -14,7 +14,7 @@
 
 - **URL:** http://localhost:5174
 - **Status:** Running
-- **Port:** 5174 (5173 was already in use)
+- **Port:** 5174 (if 5173 was already in use)
 - **API Calls:** Pointing to backend at http://localhost:5000/api/v1
 
 ---
