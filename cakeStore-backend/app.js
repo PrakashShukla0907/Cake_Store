@@ -15,6 +15,10 @@ import userRoutes from "./routes/userRoutes.js";
 import orderRoutes from "./routes/ordersRoutes.js";
 import adminOrderRoutes from "./routes/adminOrdersRoutes.js";
 import adminProductRoutes from "./routes/adminProductRoutes.js";
+import adminStatsRoutes from "./routes/adminStatsRoutes.js";
+import adminUserRoutes from "./routes/adminUserRoutes.js";
+import bannerRoutes from "./routes/bannerRoutes.js";
+import adminNotificationRoutes from "./routes/adminNotificationRoutes.js";
 
 dotenv.config();
 
@@ -50,10 +54,14 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/products", storeRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/user/orders", orderRoutes);
+app.use("/api/v1/banners", bannerRoutes);
 
 // ---------- ADMIN ----------
 app.use("/api/v1/admin/orders", adminOrderRoutes);
 app.use("/api/v1/admin/products", adminProductRoutes);
+app.use("/api/v1/admin/stats", adminStatsRoutes);
+app.use("/api/v1/admin/users", adminUserRoutes);
+app.use("/api/v1/admin/notifications", adminNotificationRoutes);
 
 // ---------- SERVER ----------
 const PORT = process.env.PORT || 5000;
