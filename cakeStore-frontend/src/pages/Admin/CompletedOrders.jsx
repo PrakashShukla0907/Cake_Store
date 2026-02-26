@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { useTheme } from "../../context/ThemeContext";
-import { Search, Eye, ChevronDown, Check, Clock, Truck, ChefHat, XCircle, Package, User, Mail, MapPin, Calendar, CreditCard } from "lucide-react";
+import { Search, Eye, ChevronDown, Check, Clock, Truck, ChefHat, XCircle, Package, User, Mail, MapPin, CreditCard, History, DollarSign } from "lucide-react";
 import { getAdminOrders, updateAdminOrderStatus } from "../../api/admin.api";
 import { useAdmin } from "../../context/AdminContext";
-import ConfirmModal from "../../components/Admin/ConfirmModal"; // Using for consistency if needed, but we'll build a custom details modal here
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -11,7 +10,7 @@ function classNames(...classes) {
 
 const STATUS_OPTIONS = ["Pending", "Baking", "Out for Delivery", "Delivered", "Cancelled"];
 
-export default function AdminOrders() {
+export default function CompletedOrders() {
   const { theme } = useTheme();
   const { refreshAdminState } = useAdmin();
   const [orders, setOrders] = useState([]);
@@ -24,9 +23,10 @@ export default function AdminOrders() {
     try {
       setLoading(true);
       const data = await getAdminOrders();
+      // Filter for only delivered orders
       const allOrders = data?.orders || data || [];
-      const active = allOrders.filter(o => o.orderStatus !== "Delivered");
-      setOrders(active);
+      const completed = allOrders.filter(o => o.orderStatus === "Delivered");
+      setOrders(completed);
     } catch (error) {
       console.error("Failed to fetch orders:", error);
     } finally {
@@ -42,9 +42,11 @@ export default function AdminOrders() {
     try {
       setUpdatingId(orderId);
       await updateAdminOrderStatus(orderId, newStatus);
-      // Optimistically update UI
-      setOrders(orders.map(order => order._id === orderId ? { ...order, orderStatus: newStatus } : order));
-      refreshAdminState(); // Update sidebar badges
+      // If status changed from Delivered, remove from this list
+      if (newStatus !== "Delivered") {
+        setOrders(orders.filter(order => order._id !== orderId));
+      }
+      refreshAdminState();
     } catch (error) {
       console.error("Failed to update status", error);
     } finally {
@@ -80,9 +82,9 @@ export default function AdminOrders() {
         };
       case 'Baking':
         return {
-          bg: theme === "dark" ? "bg-rose-400/10" : "bg-rose-100/50",
+          bg: theme === "dark" ? "bg-rose-400/10" : "bg-rose-50",
           text: theme === "dark" ? "text-rose-300" : "text-rose-600",
-          ring: theme === "dark" ? "ring-rose-400/20" : "ring-rose-600/10",
+          ring: theme === "dark" ? "ring-rose-400/20" : "ring-rose-600/20",
           icon: <ChefHat className="h-3 w-3" />,
           label: "Baking"
         };
@@ -110,16 +112,17 @@ export default function AdminOrders() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className={classNames(
-            "text-2xl font-bold tracking-tight",
+            "text-2xl font-bold tracking-tight flex items-center gap-3",
             theme === "dark" ? "text-theme-dark-text" : "text-theme-light-text"
           )}>
-            Orders {orders.length > 0 && `(${orders.length})`}
+            <History className="h-6 w-6 text-emerald-500" />
+            Completed Orders {orders.length > 0 && `(${orders.length})`}
           </h2>
           <p className={classNames(
             "mt-1 text-sm",
             theme === "dark" ? "text-theme-dark-muted" : "text-theme-light-muted"
           )}>
-            View and update order processing statuses.
+            History of successfully delivered orders.
           </p>
         </div>
 
@@ -128,25 +131,25 @@ export default function AdminOrders() {
           <div className={classNames(
             "px-6 py-3 rounded-2xl border shadow-lg flex items-center gap-4 transition-all duration-500 hover:scale-[1.02] backdrop-blur-md",
             theme === "dark" 
-              ? "bg-rose-500/10 border-rose-500/20 shadow-rose-500/5 hover:border-rose-500/40" 
-              : "bg-rose-50/80 border-rose-100 shadow-rose-500/10 hover:border-rose-200"
+              ? "bg-emerald-500/10 border-emerald-500/20 shadow-emerald-500/5 hover:border-emerald-500/40" 
+              : "bg-emerald-50/80 border-emerald-100 shadow-emerald-500/10 hover:border-emerald-200"
           )}>
             <div className={classNames(
               "p-2.5 rounded-xl transition-colors duration-300",
-              theme === "dark" ? "bg-rose-500/20 text-rose-400 group-hover:bg-rose-500/30" : "bg-white text-rose-600 shadow-sm"
+              theme === "dark" ? "bg-emerald-500/20 text-emerald-400 group-hover:bg-emerald-500/30" : "bg-white text-emerald-600 shadow-sm"
             )}>
               <span className="text-xl font-bold">₹</span>
             </div>
             <div>
               <p className={classNames(
                 "text-[10px] font-black uppercase tracking-widest opacity-60",
-                theme === "dark" ? "text-rose-400 font-bold" : "text-rose-700"
+                theme === "dark" ? "text-emerald-400 font-bold" : "text-emerald-700"
               )}>
-                Pending Revenue
+                History Revenue
               </p>
               <p className={classNames(
                 "text-2xl font-black",
-                theme === "dark" ? "text-rose-400" : "text-rose-700 font-black"
+                theme === "dark" ? "text-emerald-400" : "text-emerald-700 font-black"
               )}>
                 ₹{orders.reduce((acc, o) => acc + (o.totalAmount || 0), 0).toLocaleString()}
               </p>
@@ -173,7 +176,7 @@ export default function AdminOrders() {
                 ? "bg-theme-dark-bg text-theme-dark-text ring-theme-dark-border placeholder:text-theme-dark-muted focus:ring-2 focus:ring-theme-dark-primary" 
                 : "bg-theme-light-bg text-theme-light-text ring-theme-light-border placeholder:text-theme-light-muted focus:ring-2 focus:ring-theme-light-primary"
             )}
-            placeholder="Search by order ID, name or email..."
+            placeholder="Search within history..."
           />
         </div>
       </div>
@@ -184,7 +187,7 @@ export default function AdminOrders() {
           theme === "dark" ? "bg-theme-dark-card border-theme-dark-border" : "bg-theme-light-card border-theme-light-border"
         )}>
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-rose-500 border-t-transparent mb-4"></div>
-          <p className={theme === "dark" ? "text-theme-dark-muted" : "text-theme-light-muted"}>Loading orders...</p>
+          <p className={theme === "dark" ? "text-theme-dark-muted" : "text-theme-light-muted"}>Loading history...</p>
         </div>
       ) : orders.length === 0 ? (
         <div className={classNames(
@@ -193,15 +196,15 @@ export default function AdminOrders() {
         )}>
           <div className={classNames(
             "h-24 w-24 mb-6 rounded-full flex items-center justify-center shadow-inner transition-colors duration-500",
-            theme === "dark" ? "bg-slate-800 text-rose-500/30" : "bg-rose-50 text-rose-600/20"
+            theme === "dark" ? "bg-slate-800 text-emerald-500/30" : "bg-emerald-50 text-emerald-600/20"
           )}>
-            <Package className="h-10 w-10 animate-bounce duration-[3000ms]" />
+            <History className="h-10 w-10 animate-pulse duration-[4000ms]" />
           </div>
           <h3 className={classNames("text-xl font-black", theme === "dark" ? "text-theme-dark-text" : "text-theme-light-text")}>
-            No active orders
+            No completed orders
           </h3>
           <p className={classNames("mt-2 text-sm max-w-xs text-center font-medium", theme === "dark" ? "text-theme-dark-muted" : "text-theme-light-muted")}>
-            All caught up! New customer orders will appear here automatically as they arrive.
+            Your fulfillment history is empty. Orders appear here once they are marked as Delivered.
           </p>
         </div>
       ) : (
@@ -234,7 +237,7 @@ export default function AdminOrders() {
                  ).map((order) => (
                   <tr key={order._id} className={classNames(
                     "transition-all duration-300 group relative",
-                    theme === "dark" ? "hover:bg-theme-dark-bg/80 hover:z-[5]" : "hover:bg-theme-light-bg/80 hover:z-[5]"
+                    theme === "dark" ? "hover:bg-theme-dark-bg/80" : "hover:bg-theme-light-bg/80"
                   )}>
                     <td className="whitespace-nowrap py-5 pl-4 pr-3 sm:pl-6">
                       <div className={classNames("font-mono font-bold text-sm", theme === "dark" ? "text-theme-dark-text" : "text-theme-light-text")}>
@@ -273,11 +276,6 @@ export default function AdminOrders() {
                           <span className="text-sm font-black">
                              {order.items[0]?.quantity || 1} <span className="text-xs opacity-50 font-medium ml-0.5">pc{order.items[0]?.quantity > 1 ? 's' : ''}</span>
                           </span>
-                          {order.items.length > 1 && (
-                            <span className={classNames("text-[10px] font-black mt-1.5 px-2 py-0.5 rounded-md self-start", theme === "dark" ? "bg-slate-800 text-rose-400" : "bg-rose-50 text-rose-600")}>
-                               {order.items.reduce((acc, item) => acc + (item.quantity || 1), 0)} Total
-                            </span>
-                          )}
                        </div>
                     </td>
                     <td className={classNames("whitespace-nowrap px-3 py-5 text-base font-black", theme === "dark" ? "text-theme-dark-text" : "text-theme-light-text")}>
@@ -330,7 +328,6 @@ export default function AdminOrders() {
 
 const StatusDropdown = ({ currentStatus, onChange, theme, getStatusConfig, isUpdating }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const containerRef = useState(null);
   const config = getStatusConfig(currentStatus);
 
   const options = STATUS_OPTIONS;
