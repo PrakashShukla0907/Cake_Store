@@ -16,6 +16,24 @@ export default {
         },
         primary: "#ec4899",
         secondary: "#f97316",
+        theme: {
+          light: {
+            bg: "#f8fafc",        // Very light slate for Admin Layout bg
+            card: "#ffffff",      // Pure white for cards
+            text: "#0f172a",      // Very dark blue/slate for high contrast text
+            muted: "#475569",     // Darkened muted slate text for better visibility (placeholders)
+            border: "#cbd5e1",    // Slightly darker soft borders
+            primary: "#f43f5e",   // Rose primary
+          },
+          dark: {
+            bg: "#0f172a",        // Deep slate bg
+            card: "#1e293b",      // Lighter slate for cards
+            text: "#f8fafc",      // Bright white for text
+            muted: "#94a3b8",     // Muted text
+            border: "#334155",    // Dark slate borders
+            primary: "#fb7185",   // Lighter rose primary
+          },
+        },
       },
     },
   },
