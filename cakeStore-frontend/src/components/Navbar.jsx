@@ -26,6 +26,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const { theme } = useTheme();
   const [open, setOpen] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   
   const { notifications, refreshAdminState } = useAdmin();
   const [showNotifications, setShowNotifications] = useState(false);
@@ -99,7 +100,7 @@ export default function Navbar() {
             <div className="flex h-16 justify-between items-center">
               {/* Logo and Brand */}
               <Link to="/" className="flex items-center gap-3 shrink-0 group">
-                <div className="relative">
+                <div className="relative hidden md:block">
                   <div className="absolute -inset-1 bg-gradient-to-r from-rose-400 to-pink-500 rounded-full blur opacity-40 group-hover:opacity-75 transition duration-300"></div>
                   <img
                     src={logo}
@@ -108,7 +109,7 @@ export default function Navbar() {
                   />
                 </div>
                 <span className={classNames(
-                  "text-xl font-extrabold hidden sm:inline tracking-tight",
+                  "text-xl font-extrabold tracking-tight",
                   theme === "dark" ? "text-white" : "text-slate-900"
                 )}>
                   GOPAL BAKERS
@@ -349,8 +350,25 @@ export default function Navbar() {
                   </Link>
                 )}
 
-                {/* Theme Toggle */}
-                <ThemeToggle />
+                {/* Theme Toggle (Desktop Only) */}
+                <div className="hidden md:block">
+                  <ThemeToggle />
+                </div>
+
+                {/* Mobile Search Icon */}
+                <button
+                  type="button"
+                  onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
+                  className={classNames(
+                    "md:hidden p-2 rounded-full transition-all group",
+                    theme === "dark" ? "text-slate-300 hover:bg-slate-800" : "text-slate-600 hover:bg-rose-50"
+                  )}
+                >
+                  <FaSearch className={classNames(
+                    "h-5 w-5 transition-colors",
+                    theme === "dark" ? "group-hover:text-rose-400" : "group-hover:text-rose-600"
+                  )} />
+                </button>
 
                 {/* Auth Links - Simplified to only burger menu on small screens */}
                 {!loading && (
@@ -414,6 +432,55 @@ export default function Navbar() {
               </div>
             </div>
           </div>
+
+          {/* Mobile Overlay Search Bar */}
+          {isMobileSearchOpen && (
+            <div className={classNames(
+              "md:hidden absolute top-16 left-0 w-full p-4 border-b z-40 shadow-lg",
+              theme === "dark" ? "bg-slate-900 border-slate-800" : "bg-theme-cream-solid border-rose-100"
+            )}>
+              <form 
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const formData = new FormData(e.target);
+                  const query = formData.get("search");
+                  if (query) {
+                    navigate(`/?search=${encodeURIComponent(query)}`);
+                    setIsMobileSearchOpen(false);
+                  } else {
+                    navigate(`/`);
+                  }
+                }}
+                className="relative flex items-center"
+              >
+                <div className={classNames(
+                  "absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors",
+                  theme === "dark" ? "text-slate-400" : "text-slate-400"
+                )}>
+                  <FaSearch className="h-4 w-4" />
+                </div>
+                <input
+                  type="text"
+                  name="search"
+                  autoFocus
+                  placeholder="Search cakes..."
+                  className={classNames(
+                    "block w-full pl-10 pr-10 py-2 border rounded-full text-sm font-medium transition-all duration-300 outline-none focus:ring-2 focus:ring-opacity-50",
+                    theme === "dark" 
+                      ? "bg-slate-800/50 border-slate-700 text-slate-200 placeholder-slate-500 focus:bg-slate-800 focus:border-rose-500/50 focus:ring-rose-500/30"
+                      : "bg-gray-100/50 border-gray-200 text-slate-800 placeholder-slate-500 focus:bg-theme-cream-solid focus:border-rose-300 focus:ring-rose-200"
+                  )}
+                />
+                <button 
+                  type="button"
+                  onClick={() => setIsMobileSearchOpen(false)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-rose-500"
+                >
+                  <XMarkIcon className="h-5 w-5" />
+                </button>
+              </form>
+            </div>
+          )}
 
           {/* Mobile Menu */}
           <DisclosurePanel className="lg:hidden border-b border-rose-100 dark:border-slate-800 bg-theme-cream-solid dark:bg-slate-900 shadow-xl relative z-40">
