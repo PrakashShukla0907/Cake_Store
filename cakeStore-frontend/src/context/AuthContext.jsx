@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import { getProfile } from "../api/auth.api";
+import { getProfile, logoutUser } from "../api/auth.api";
 
 export const AuthContext = createContext();
 
@@ -22,8 +22,18 @@ export const AuthProvider = ({ children }) => {
     fetchProfile();
   }, []);
 
+  const logout = async () => {
+    try {
+      await logoutUser();
+      setUser(null);
+      window.location.href = "/login";
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, setUser, loading }}>
+    <AuthContext.Provider value={{ user, setUser, loading, logout, refreshUser: fetchProfile }}>
       {children}
     </AuthContext.Provider>
   );

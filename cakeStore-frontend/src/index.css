@@ -1,7 +1,17 @@
 @import "tailwindcss";
 
+html {
+  scroll-behavior: smooth;
+}
+
 * {
   box-sizing: border-box;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;    /* Firefox */
+}
+
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
 }
 
 body {
@@ -11,8 +21,8 @@ body {
 }
 
 html.dark body {
-  background-color: #2b1b17;
-  color: #e5d3c5;
+  background-color: #0f172a;
+  color: #f1f5f9;
 }
 
 .btn-primary {
@@ -31,12 +41,12 @@ html.dark body {
 }
 
 .dark .btn-primary {
-  background-color: #b97a6a;
-  color: #e5d3c5;
+  background-color: #f43f5e;
+  color: #ffffff;
 }
 
 .dark .btn-primary:hover {
-  background-color: #2b1b17;
+  background-color: #e11d48;
 }
 
 .btn-secondary {
@@ -53,12 +63,12 @@ html.dark body {
 }
 
 .dark .btn-secondary {
-  background-color: #2b1b17;
-  color: #e5d3c5;
+  background-color: #1e293b;
+  color: #f1f5f9;
 }
 
 .dark .btn-secondary:hover {
-  background-color: #b97a6a;
+  background-color: #334155;
 }
 
 .card {
@@ -74,7 +84,7 @@ html.dark body {
 }
 
 .dark .card {
-  background-color: #e5d3c5;
+  background-color: #1e293b;
 }
 
 .input-field {
@@ -93,11 +103,12 @@ html.dark body {
 }
 
 .dark .input-field {
-  border-color: #2b1b17;
+  border-color: #334155;
+  background-color: #0f172a;
 }
 
 .dark .input-field:focus {
-  outline: 2px solid #b97a6a;
+  outline: 2px solid #f43f5e;
   outline-offset: 2px;
 }
 
@@ -115,5 +126,25 @@ html.dark body {
 }
 
 .dark .section-title {
-  color: #b97a6a;
+  color: #fda4af;
+}
+
+/* 🏷️ Badge Utilities */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.badge-corner {
+  position: absolute;
+  top: -0.25rem;
+  right: -0.25rem;
+  outline: 2px solid white;
+  outline-offset: 0;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+  transition: all 0.3s;
 }
