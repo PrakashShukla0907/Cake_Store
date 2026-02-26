@@ -34,17 +34,17 @@ const orderSchema = new mongoose.Schema(
       },
       lat: {
         type: Number,
-        required: true,
+        default: 0,
       },
       lng: {
         type: Number,
-        required: true,
+        default: 0,
       },
     },
 
     orderStatus: {
       type: String,
-      enum: ["Pending", "Baking", "Out for Delivery", "Delivered"],
+      enum: ["Pending", "Baking", "Out for Delivery", "Delivered", "Cancelled"],
       default: "Pending",
     },
 
