@@ -31,7 +31,10 @@ const Login = () => {
     setLoading(true);
 
     try {
-      await loginUser(formData);
+      const res = await loginUser(formData);
+      if (res.data && res.data.token) {
+        localStorage.setItem("token", res.data.token);
+      }
       const profileRes = await getProfile();
 
       setUser(profileRes.data.user);

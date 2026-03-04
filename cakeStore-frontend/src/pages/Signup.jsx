@@ -47,7 +47,10 @@ const Signup = () => {
       await signupUser(formData);
 
       // We need to login to get the cookie!
-      await loginUser({ identifier: formData.email, password: formData.password });
+      const loginRes = await loginUser({ identifier: formData.email, password: formData.password });
+      if (loginRes.data && loginRes.data.token) {
+        localStorage.setItem("token", loginRes.data.token);
+      }
 
       // auto login after signup
       const profileRes = await getProfile();
