@@ -29,12 +29,13 @@ export const getStoreProducts = async (req, res) => {
       query.category = category;
     }
 
-    const totalProducts = await Product.countDocuments(query);
-
-    const products = await Product.find(query)
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
+    const [totalProducts, products] = await Promise.all([
+      Product.countDocuments(query),
+      Product.find(query)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+    ]);
 
     res.status(200).json({
       success: true,

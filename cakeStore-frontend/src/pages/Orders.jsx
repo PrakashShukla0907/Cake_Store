@@ -343,7 +343,7 @@ const OrderReceiptModal = ({ order, onClose, theme, getStatusConfig }) => {
                   <Package className="h-6 w-6" />
                </div>
                <h3 className={classNames("text-2xl font-black italic", theme === "dark" ? "text-white" : "text-rose-500")}>
-                 GOPAL BAKERS
+                 BakeEase
                </h3>
                <p className="text-[10px] font-black uppercase tracking-[4px] opacity-40 mt-1">Official Purchase Receipt</p>
             </div>

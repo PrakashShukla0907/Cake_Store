@@ -66,14 +66,13 @@ export const getAllProducts = async (req, res) => {
         }
       : {};
 
-    const products = await Product.find({
-      ...keyword,
-    })
-      .limit(limit)
-      .skip(skip)
-      .sort({ createdAt: -1 });
-
-    const total = await Product.countDocuments(keyword);
+    const [products, total] = await Promise.all([
+      Product.find({ ...keyword })
+        .limit(limit)
+        .skip(skip)
+        .sort({ createdAt: -1 }),
+      Product.countDocuments(keyword)
+    ]);
 
     res.status(200).json({
       success: true,

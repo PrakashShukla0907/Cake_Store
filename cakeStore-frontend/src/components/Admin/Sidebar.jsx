@@ -52,7 +52,7 @@ export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }) {
           "text-xl font-bold tracking-tight",
           theme === "dark" ? "text-theme-dark-text" : "text-theme-light-text"
         )}>
-          GOPAL BAKERS Admin
+          BakeEase Admin
         </Link>
         <button
           type="button"

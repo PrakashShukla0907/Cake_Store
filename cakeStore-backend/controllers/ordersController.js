@@ -50,16 +50,15 @@ export const placeOrder = async (req, res) => {
       paymentMethod,
     });
 
-    // Generate Admin Notification
-    await Notification.create({
-      type: "New Order",
-      message: `A new order of ₹${totalAmount.toFixed(2)} has been placed by ${user.name}.`,
-      data: { orderId: order._id }
-    });
-
-    // Clear cart after order
-    user.cart = [];
-    await user.save();
+    // Run non-critical writes in the background to reduce response latency
+    Promise.all([
+      Notification.create({
+        type: "New Order",
+        message: `A new order of ₹${totalAmount.toFixed(2)} has been placed by ${user.name}.`,
+        data: { orderId: order._id },
+      }),
+      User.updateOne({ _id: user._id }, { $set: { cart: [] } }),
+    ]).catch((err) => console.error("Place order background tasks error:", err));
 
     res.status(201).json({
       success: true,

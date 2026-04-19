@@ -30,7 +30,7 @@ const AdminUsers        = lazy(() => import("./pages/Admin/Users"));
 // Full-page loading spinner shown while a lazy chunk is being fetched
 function PageLoader() {
   return (
-    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-theme-cream-gradient dark:bg-slate-950 gap-5">
+    <div className="fixed inset-0 z-9999 flex flex-col items-center justify-center bg-theme-cream-gradient dark:bg-slate-950 gap-5">
       <div className="relative">
         <div className="h-14 w-14 rounded-full border-4 border-rose-100 dark:border-slate-800" />
         <div className="absolute inset-0 h-14 w-14 animate-spin rounded-full border-4 border-transparent border-t-rose-500" />

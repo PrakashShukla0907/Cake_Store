@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema(
       default: "user",
     },
 
-    // 🛒 Cart
+    //  Cart
     cart: [
       {
         productId: {
@@ -57,7 +57,7 @@ const userSchema = new mongoose.Schema(
       },
     ],
 
-    // ❤️ Favourite products
+    //  Favourite products
     favourites: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -65,7 +65,7 @@ const userSchema = new mongoose.Schema(
       },
     ],
 
-    // 📦 Orders
+    //  Orders
     orders: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -73,7 +73,7 @@ const userSchema = new mongoose.Schema(
       },
     ],
 
-    // 🏠 Address
+    //  Address
     address: {
       street: String,
       city: String,

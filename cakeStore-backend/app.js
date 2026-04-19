@@ -7,7 +7,6 @@ import morgan from "morgan";
 
 // local modules
 import connectDB from "./config/db.js";
-import { verifyToken } from "./middleware/auth.js";
 
 import authRoutes from "./routes/authRoutes.js";
 import storeRoutes from "./routes/storeRoutes.js";

@@ -1,0 +1,24 @@
+services:
+  backend:
+    build:
+      context: ./cakeStore-backend
+      dockerfile: Dockerfile.backend
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    environment:
+      - CLIENT_ORIGIN=http://localhost:3000
+    restart: always
+
+  frontend:
+    build:
+      context: ./cakeStore-frontend
+      dockerfile: Dockerfile.frontend
+      args:
+        - VITE_API_URL=http://localhost:5000/api/v1
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: always

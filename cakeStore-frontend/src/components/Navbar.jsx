@@ -112,7 +112,7 @@ export default function Navbar() {
                   "text-xl font-extrabold tracking-tight",
                   theme === "dark" ? "text-white" : "text-slate-900"
                 )}>
-                  GOPAL BAKERS
+                  BakeEase
                 </span>
               </Link>
 
