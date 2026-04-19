@@ -1,5 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
-import { CloudinaryStorage } from "multer-storage-cloudinary";
+
 import multer from "multer";
 import dotenv from "dotenv";
 
@@ -11,14 +11,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: "cakeStore", // folder in Cloudinary
-    allowed_formats: ["jpg", "jpeg", "png"],
-    transformation: [{ width: 800, height: 800, crop: "limit", quality: "auto", fetch_format: "auto" }],
-  },
-});
+const storage = multer.memoryStorage();
 
 const parser = multer({ storage });
 
