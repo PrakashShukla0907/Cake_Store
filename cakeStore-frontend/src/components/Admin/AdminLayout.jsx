@@ -2,21 +2,12 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
-import { useTheme } from "../../context/ThemeContext";
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
 
 export default function AdminLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { theme } = useTheme();
 
   return (
-    <div className={classNames(
-      "min-h-screen transition-colors duration-300",
-      theme === "dark" ? "bg-theme-dark-bg/50" : "bg-gray-50/50" // use a slightly offset background for the layout interior
-    )}>
+    <div className="min-h-screen bg-gray-50 transition-colors duration-300">
       {/* Sidebar handles both desktop and mobile overlays */}
       <Sidebar mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
 

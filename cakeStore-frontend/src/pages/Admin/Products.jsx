@@ -1,15 +1,9 @@
 import { useState, useEffect } from "react";
-import { useTheme } from "../../context/ThemeContext";
 import { Plus, Search, Edit2, Trash2, Image as ImageIcon, X, Loader2 } from "lucide-react";
 import { getAdminProducts, deleteAdminProduct, createAdminProduct, updateAdminProduct } from "../../api/admin.api";
 import ConfirmModal from "../../components/Admin/ConfirmModal";
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
-
 export default function AdminProducts() {
-  const { theme } = useTheme();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -130,28 +124,17 @@ export default function AdminProducts() {
     <div className="space-y-6 relative">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className={classNames(
-            "text-2xl font-bold tracking-tight",
-            theme === "dark" ? "text-theme-dark-text" : "text-theme-light-text"
-          )}>
+          <h2 className="text-2xl font-black tracking-tight text-black">
             Products
           </h2>
-          <p className={classNames(
-            "mt-1 text-sm",
-            theme === "dark" ? "text-theme-dark-muted" : "text-theme-light-muted"
-          )}>
+          <p className="mt-1 text-sm font-medium text-gray-500">
             Manage your bakery catalog, prices, and stock.
           </p>
         </div>
         
         <button 
           onClick={openAddModal}
-          className={classNames(
-            "inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold shadow-sm transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
-            theme === "dark" 
-              ? "bg-theme-dark-primary text-theme-dark-bg hover:brightness-110 focus-visible:outline-theme-dark-primary" 
-              : "bg-theme-light-primary text-theme-light-text hover:brightness-95 focus-visible:outline-theme-light-primary"
-          )}
+          className="inline-flex items-center justify-center rounded-md px-4 py-2.5 text-sm font-bold shadow-sm transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 bg-black text-white hover:bg-gray-800"
         >
           <Plus className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
           Add Product
@@ -160,60 +143,54 @@ export default function AdminProducts() {
 
       {/* Add Product Modal Overlay */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className={classNames(
-            "w-full max-w-md rounded-2xl shadow-xl border max-h-[90vh] overflow-hidden flex flex-col",
-            theme === "dark" ? "bg-slate-900 border-slate-700" : "bg-theme-cream-solid border-rose-100"
-          )}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="w-full max-w-md rounded-md shadow-xl border bg-white border-gray-200 max-h-[90vh] overflow-hidden flex flex-col">
             {/* Loading Bar */}
-            <div className="relative h-1 w-full overflow-hidden rounded-t-2xl bg-transparent">
+            <div className="relative h-1 w-full overflow-hidden bg-transparent">
               {submitting && (
                 <div 
-                  className="absolute h-full bg-rose-500 rounded-full"
-                  style={{ animation: "loadingBar 1.5s ease-in-out infinite" }}
+                  className="absolute h-full bg-black rounded-full"
+                  style={{ width: "100%", animation: "loadingBar 1.5s ease-in-out infinite" }}
                 />
               )}
             </div>
             <div className="p-6 overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
-              <h3 className={classNames("text-xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")}>
+              <h3 className="text-xl font-black text-black">
                 {editingId ? "Edit Product" : "Add New Product"}
               </h3>
-              <button onClick={() => !submitting && setIsModalOpen(false)} disabled={submitting} className={classNames("p-1 rounded transition-colors", theme === "dark" ? "hover:bg-slate-800 text-slate-400" : "hover:bg-rose-50 text-gray-500", submitting && "opacity-40 cursor-not-allowed")}>
+              <button onClick={() => !submitting && setIsModalOpen(false)} disabled={submitting} className={`p-1 rounded transition-colors hover:bg-gray-100 text-gray-500 ${submitting ? "opacity-40 cursor-not-allowed" : ""}`}>
                 <X className="h-6 w-6" />
               </button>
             </div>
             
             <form onSubmit={handleSaveProduct} className="space-y-4">
               <div>
-                <label className={classNames("block text-sm font-medium mb-1", theme === "dark" ? "text-slate-300" : "text-gray-700")}>Product Name</label>
-                <input required type="text" value={newProduct.name} onChange={e => setNewProduct({...newProduct, name: e.target.value})} className={classNames("w-full rounded-lg border-0 py-2 px-3 shadow-sm ring-1 ring-inset focus:ring-2", theme === "dark" ? "bg-slate-800 text-white ring-slate-700 focus:ring-rose-500" : "bg-theme-cream-solid text-gray-900 ring-rose-200 focus:ring-rose-500")} />
+                <label className="block text-sm font-bold mb-1 text-black">Product Name</label>
+                <input required type="text" value={newProduct.name} onChange={e => setNewProduct({...newProduct, name: e.target.value})} className="w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:ring-1 focus:ring-black focus:border-black bg-white text-black" />
               </div>
               
               <div>
-                <label className={classNames("block text-sm font-medium mb-1", theme === "dark" ? "text-slate-300" : "text-gray-700")}>Description</label>
-                <textarea required rows={2} value={newProduct.description} onChange={e => setNewProduct({...newProduct, description: e.target.value})} className={classNames("w-full rounded-lg border-0 py-2 px-3 shadow-sm ring-1 ring-inset focus:ring-2", theme === "dark" ? "bg-slate-800 text-white ring-slate-700 focus:ring-rose-500" : "bg-theme-cream-solid text-gray-900 ring-rose-200 focus:ring-rose-500")} />
+                <label className="block text-sm font-bold mb-1 text-black">Description</label>
+                <textarea required rows={2} value={newProduct.description} onChange={e => setNewProduct({...newProduct, description: e.target.value})} className="w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:ring-1 focus:ring-black focus:border-black bg-white text-black" />
               </div>
 
               <div>
-                <label className={classNames("block text-sm font-medium mb-1", theme === "dark" ? "text-slate-300" : "text-gray-700")}>Product Image {editingId && "(Leave blank to keep current)"}</label>
+                <label className="block text-sm font-bold mb-1 text-black">Product Image {editingId && "(Leave blank to keep current)"}</label>
                 
                 {/* Image Preview Area */}
-                <div className={classNames(
-                  "mb-4 flex items-center justify-center h-48 rounded-xl border-2 border-dashed overflow-hidden relative group",
-                  theme === "dark" ? "bg-slate-800/50 border-slate-700" : "bg-gray-50 border-rose-100"
-                )}>
+                <div className="mb-4 flex items-center justify-center h-48 rounded-md border-2 border-dashed overflow-hidden relative group bg-gray-50 border-gray-300">
                   {imagePreview ? (
                     <>
-                      <img src={imagePreview} alt="Preview" className="h-full w-full object-contain" />
+                      <img src={imagePreview} alt="Preview" className="h-full w-full object-contain bg-white" />
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <p className="text-white text-xs font-bold bg-black/50 px-3 py-1 rounded-full uppercase tracking-widest">New Image Selected</p>
+                        <p className="text-white text-[10px] font-black bg-black px-3 py-1 rounded-sm uppercase tracking-[3px]">New Image Selected</p>
                       </div>
                     </>
                   ) : (
                     <div className="text-center p-6">
-                      <ImageIcon className={classNames("mx-auto h-12 w-12 mb-2", theme === "dark" ? "text-slate-600" : "text-gray-300")} />
-                      <p className={classNames("text-xs", theme === "dark" ? "text-slate-500" : "text-gray-400")}>No image selected</p>
+                      <ImageIcon className="mx-auto h-12 w-12 mb-2 text-gray-400" />
+                      <p className="text-xs font-bold text-gray-500">No image selected</p>
                     </div>
                   )}
                 </div>
@@ -229,44 +206,35 @@ export default function AdminProducts() {
                       setImagePreview(URL.createObjectURL(file));
                     }
                   }} 
-                  className={classNames(
-                    "w-full rounded-lg border-0 py-2 px-3 shadow-sm ring-1 ring-inset focus:ring-2", 
-                    theme === "dark" ? "bg-slate-800 text-white ring-slate-700 focus:ring-rose-500" : "bg-theme-cream-solid text-gray-900 ring-rose-200 focus:ring-rose-500",
-                    "file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold text-xs",
-                    theme === "dark" ? "file:bg-rose-500/10 file:text-rose-400 hover:file:bg-rose-500/20" : "file:bg-rose-50 file:text-rose-700 hover:file:bg-rose-100"
-                  )} 
+                  className="w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:ring-1 focus:ring-black focus:border-black bg-white text-black file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-bold file:bg-gray-100 file:text-black hover:file:bg-gray-200 text-xs font-medium"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className={classNames("block text-sm font-medium mb-1", theme === "dark" ? "text-slate-300" : "text-gray-700")}>Category</label>
-                  <select required value={newProduct.category} onChange={e => setNewProduct({...newProduct, category: e.target.value})} className={classNames("w-full rounded-lg border-0 py-2 px-3 shadow-sm ring-1 ring-inset focus:ring-2", theme === "dark" ? "bg-slate-800 text-white ring-slate-700 focus:ring-rose-500" : "bg-theme-cream-solid text-gray-900 ring-rose-200 focus:ring-rose-500")}>
+                  <label className="block text-sm font-bold mb-1 text-black">Category</label>
+                  <select required value={newProduct.category} onChange={e => setNewProduct({...newProduct, category: e.target.value})} className="w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:ring-1 focus:ring-black focus:border-black bg-white text-black">
                     {["cake", "pastry", "bread", "cookies", "cupcake", "other"].map(cat => (
                       <option key={cat} value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label className={classNames("block text-sm font-medium mb-1", theme === "dark" ? "text-slate-300" : "text-gray-700")}>Price (₹)</label>
-                  <input required type="number" step="0.01" min="0" value={newProduct.price} onChange={e => setNewProduct({...newProduct, price: e.target.value})} className={classNames("w-full rounded-lg border-0 py-2 px-3 shadow-sm ring-1 ring-inset focus:ring-2", theme === "dark" ? "bg-slate-800 text-white ring-slate-700 focus:ring-rose-500" : "bg-theme-cream-solid text-gray-900 ring-rose-200 focus:ring-rose-500")} />
+                  <label className="block text-sm font-bold mb-1 text-black">Price (₹)</label>
+                  <input required type="number" step="0.01" min="0" value={newProduct.price} onChange={e => setNewProduct({...newProduct, price: e.target.value})} className="w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:ring-1 focus:ring-black focus:border-black bg-white text-black" />
                 </div>
               </div>
 
               <div className="flex items-center mt-2">
-                <input type="checkbox" id="available" checked={newProduct.available} onChange={e => setNewProduct({...newProduct, available: e.target.checked})} className="h-4 w-4 rounded border-gray-300 text-rose-500 focus:ring-rose-500 cursor-pointer" />
-                <label htmlFor="available" className={classNames("ml-2 block text-sm cursor-pointer", theme === "dark" ? "text-slate-300" : "text-gray-900")}>Mark as Available</label>
+                <input type="checkbox" id="available" checked={newProduct.available} onChange={e => setNewProduct({...newProduct, available: e.target.checked})} className="h-4 w-4 rounded border-gray-300 text-black focus:ring-black cursor-pointer" />
+                <label htmlFor="available" className="ml-2 block text-sm font-bold cursor-pointer text-black">Mark as Available</label>
               </div>
               
               <div className="mt-6">
                 <button 
                   type="submit" 
                   disabled={submitting}
-                  className={classNames(
-                    "w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors",
-                    theme === "dark" ? "bg-rose-500 text-white hover:bg-rose-400 focus:ring-rose-500 focus:ring-offset-slate-900" : "bg-rose-500 text-white hover:bg-rose-600 focus:ring-rose-500",
-                    submitting && "opacity-75 cursor-not-allowed"
-                  )}
+                  className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-md shadow-sm text-sm font-bold focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors bg-black text-white hover:bg-gray-800 focus:ring-black ${submitting ? "opacity-75 cursor-not-allowed" : ""}`}
                 >
                   {submitting ? (
                     <><Loader2 className="h-4 w-4 animate-spin" /> {editingId ? "Updating..." : "Adding Product..."}</>
@@ -282,24 +250,14 @@ export default function AdminProducts() {
       )}
 
       {/* Toolbar / Search */}
-      <div className={classNames(
-        "flex items-center justify-between p-4 rounded-xl border shadow-sm transition-colors duration-300",
-        theme === "dark" 
-          ? "bg-theme-dark-card border-theme-dark-border" 
-          : "bg-theme-light-card border-theme-light-border"
-      )}>
+      <div className="flex items-center justify-between p-4 rounded-md border border-gray-200 bg-white shadow-sm">
         <div className="relative max-w-sm w-full">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <Search className={classNames("h-5 w-5", theme === "dark" ? "text-theme-dark-muted" : "text-theme-light-muted")} aria-hidden="true" />
+            <Search className="h-5 w-5 text-gray-400" aria-hidden="true" />
           </div>
           <input
             type="text"
-            className={classNames(
-              "block w-full rounded-lg border-0 py-2 pl-10 pr-3 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 transition-colors",
-              theme === "dark" 
-                ? "bg-theme-dark-bg text-theme-dark-text ring-theme-dark-border placeholder:text-theme-dark-muted focus:ring-theme-dark-primary" 
-                : "bg-theme-light-bg text-theme-light-text ring-theme-light-border placeholder:text-theme-light-muted focus:ring-theme-light-primary"
-            )}
+            className="block w-full rounded-md border border-gray-200 py-2 pl-10 pr-3 shadow-sm bg-white text-black placeholder:text-gray-400 focus:border-black focus:ring-1 focus:ring-black sm:text-sm sm:leading-6 transition-colors"
             placeholder="Search products..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -309,110 +267,84 @@ export default function AdminProducts() {
 
       {/* Products Table Area */}
       {loading ? (
-        <div className={classNames(
-          "flex flex-col items-center justify-center p-20 rounded-xl border shadow-sm transition-colors duration-300",
-          theme === "dark" ? "bg-theme-dark-card border-theme-dark-border" : "bg-theme-light-card border-theme-light-border"
-        )}>
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-rose-500 border-t-transparent mb-4"></div>
-          <p className={theme === "dark" ? "text-theme-dark-muted" : "text-theme-light-muted"}>Loading products...</p>
+        <div className="flex flex-col items-center justify-center p-20 rounded-md border border-gray-200 bg-white shadow-sm">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-black mb-4"></div>
+          <p className="font-medium text-gray-500">Loading products...</p>
         </div>
       ) : products.length === 0 ? (
-        <div className={classNames(
-          "flex flex-col items-center justify-center p-20 rounded-xl border shadow-sm transition-colors duration-300",
-          theme === "dark" ? "bg-theme-dark-card border-theme-dark-border" : "bg-theme-light-card border-theme-light-border"
-        )}>
-          <div className={classNames(
-            "h-16 w-16 mb-4 rounded-full flex items-center justify-center",
-            theme === "dark" ? "bg-theme-dark-bg text-theme-dark-muted" : "bg-theme-light-bg text-theme-light-muted"
-          )}>
+        <div className="flex flex-col items-center justify-center p-20 rounded-md border border-gray-200 bg-white shadow-sm">
+          <div className="h-16 w-16 mb-4 rounded-md flex items-center justify-center bg-gray-50 text-gray-400">
             <Search className="h-8 w-8" />
           </div>
-          <h3 className={classNames("text-lg font-semibold", theme === "dark" ? "text-theme-dark-text" : "text-theme-light-text")}>No products found</h3>
-          <p className={classNames("mt-1 text-sm max-w-sm text-center", theme === "dark" ? "text-theme-dark-muted" : "text-theme-light-muted")}>
+          <h3 className="text-lg font-black text-black">No products found</h3>
+          <p className="mt-1 text-sm max-w-sm text-center font-medium text-gray-500">
             {searchTerm ? "Try adjusting your search query to find what you're looking for." : "Get started by adding your first bakery product."}
           </p>
         </div>
       ) : (
-        <div className={classNames(
-          "rounded-xl shadow-sm border overflow-hidden transition-colors duration-300",
-          theme === "dark" ? "bg-theme-dark-card border-theme-dark-border" : "bg-theme-light-card border-theme-light-border"
-        )}>
+        <div className="rounded-md shadow-sm border border-gray-200 bg-white overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
-              <thead className={classNames(
-                theme === "dark" ? "bg-theme-dark-bg/50 text-theme-dark-muted" : "bg-theme-light-bg text-theme-light-muted"
-              )}>
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50 text-gray-500">
                 <tr>
-                  <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6">Product</th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold">Category</th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold">Price</th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold">Status</th>
+                  <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-xs font-black uppercase tracking-widest sm:pl-6">Product</th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-xs font-black uppercase tracking-widest">Category</th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-xs font-black uppercase tracking-widest">Price</th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-xs font-black uppercase tracking-widest">Status</th>
                   <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
                     <span className="sr-only">Actions</span>
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-slate-800">
+              <tbody className="divide-y divide-gray-200">
                 {products.map((product) => (
-                  <tr key={product._id} className={classNames(
-                    "transition-colors",
-                    theme === "dark" ? "hover:bg-theme-dark-bg/50" : "hover:bg-theme-light-bg/50"
-                  )}>
+                  <tr key={product._id} className="transition-colors hover:bg-gray-50">
                     <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
                       <div className="flex items-center">
                         <div className="h-10 w-10 flex-shrink-0">
                           {product.image ? (
-                            <img className="h-10 w-10 rounded-lg object-cover" src={product.image} alt={product.name} />
+                            <img className="h-10 w-10 rounded-md object-cover border border-gray-200 bg-white" src={product.image} alt={product.name} />
                           ) : (
-                            <div className={classNames(
-                              "flex h-10 w-10 items-center justify-center rounded-lg border",
-                              theme === "dark" ? "bg-theme-dark-bg border-theme-dark-border" : "bg-theme-light-bg border-theme-light-border"
-                            )}>
-                              <ImageIcon className={classNames("h-5 w-5", theme === "dark" ? "text-theme-dark-muted" : "text-theme-light-muted")} />
+                            <div className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-200 bg-gray-50">
+                              <ImageIcon className="h-5 w-5 text-gray-400" />
                             </div>
                           )}
                         </div>
                         <div className="ml-4">
-                          <div className={classNames("font-medium", theme === "dark" ? "text-theme-dark-text" : "text-theme-light-text")}>
+                          <div className="font-bold text-black">
                             {product.name}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className={classNames("whitespace-nowrap px-3 py-4 text-sm", theme === "dark" ? "text-theme-dark-muted" : "text-theme-light-muted")}>
-                      <span className={classNames(
-                        "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset",
-                        theme === "dark" ? "bg-theme-dark-bg text-theme-dark-text ring-theme-dark-border" : "bg-theme-light-bg text-theme-light-text ring-theme-light-border"
-                      )}>
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      <span className="inline-flex items-center rounded-sm px-2 py-0.5 text-[10px] font-black uppercase tracking-widest bg-gray-100 text-gray-700 border border-gray-200">
                         {product.category || "Uncategorized"}
                       </span>
                     </td>
-                    <td className={classNames("whitespace-nowrap px-3 py-4 text-sm font-semibold", theme === "dark" ? "text-theme-dark-text" : "text-theme-light-text")}>
+                    <td className="whitespace-nowrap px-3 py-4 text-sm font-black text-black">
                       ₹{product.price?.toFixed(2)}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm">
-                      <span className={classNames(
-                        "inline-flex items-center rounded-full px-2 py-1 text-xs font-medium",
+                      <span className={`inline-flex items-center rounded-sm px-2 py-0.5 text-[10px] font-black uppercase tracking-widest ${
                         product.available !== false
-                          ? (theme === "dark" ? "bg-emerald-400/10 text-emerald-400" : "bg-emerald-50 text-emerald-700")
-                          : (theme === "dark" ? "bg-rose-400/10 text-rose-400" : "bg-rose-50 text-rose-700")
-                      )}>
+                          ? "bg-black text-white"
+                          : "bg-red-50 text-red-700 border border-red-200"
+                      }`}>
                         {product.available !== false ? "Available" : "Out of Stock"}
                       </span>
                     </td>
                     <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                       <button 
                         onClick={() => handleEditClick(product)}
-                        className={classNames(
-                        "mr-4 transition-colors",
-                        theme === "dark" ? "text-theme-dark-primary hover:text-white" : "text-theme-light-primary hover:text-theme-light-text"
-                      )}>
+                        className="mr-4 transition-colors text-black hover:text-gray-600"
+                      >
                         <Edit2 className="h-4 w-4" />
                         <span className="sr-only">Edit {product.name}</span>
                       </button>
                       <button 
                         onClick={() => handleDelete(product)}
-                        className="text-red-500 hover:text-red-700 transition-colors"
+                        className="text-red-600 hover:text-red-800 transition-colors"
                       >
                         <Trash2 className="h-4 w-4" />
                         <span className="sr-only">Delete {product.name}</span>

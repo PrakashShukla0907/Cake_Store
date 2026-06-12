@@ -1,16 +1,10 @@
 import { useEffect, useState } from "react";
-import { useTheme } from "../../context/ThemeContext";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { ShoppingBag, Box, Users, CheckCircle, Package, IndianRupee } from "lucide-react";
 import StatsCard from "../../components/Admin/StatsCard";
 import { getAdminStats, getAdminOrders } from "../../api/admin.api";
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
-
 export default function Dashboard() {
-  const { theme } = useTheme();
   const [stats, setStats] = useState({ 
     totalRevenue: 0, 
     totalOrders: 0, 
@@ -60,7 +54,7 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="flex justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-rose-500 border-t-transparent"></div>
+        <div className="h-8 w-8 animate-spin rounded-md border-4 border-gray-200 border-t-black"></div>
       </div>
     );
   }
@@ -68,16 +62,10 @@ export default function Dashboard() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div>
-        <h2 className={classNames(
-          "text-2xl font-bold tracking-tight",
-          theme === "dark" ? "text-theme-dark-text" : "text-theme-light-text"
-        )}>
+        <h2 className="text-2xl font-black tracking-tight text-black">
           Dashboard Overview
         </h2>
-        <p className={classNames(
-          "mt-2 text-sm",
-          theme === "dark" ? "text-theme-dark-muted" : "text-theme-light-muted"
-        )}>
+        <p className="mt-2 text-sm font-medium text-gray-500">
           Detailed view of your bakery&apos;s performance and order status.
         </p>
       </div>
@@ -116,64 +104,56 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         
         {/* Revenue Line Chart */}
-        <div className={classNames(
-          "rounded-2xl shadow-sm border p-6 transition-colors duration-300",
-          theme === "dark" 
-            ? "bg-theme-dark-card border-theme-dark-border" 
-            : "bg-theme-light-card border-theme-light-border"
-        )}>
-          <h3 className={classNames(
-            "text-lg font-semibold mb-6",
-            theme === "dark" ? "text-theme-dark-text" : "text-theme-light-text"
-          )}>
+        <div className="rounded-md shadow-sm border border-gray-200 bg-white p-6">
+          <h3 className="text-lg font-black mb-6 text-black">
             Revenue Overview (Past 7 Months)
           </h3>
-          <div className="h-80 w-full animate-in fade-in zoom-in duration-1000 delay-300">
+          <div className="h-80 w-full">
             <ResponsiveContainer width="100%" height="100%" minWidth={1}>
               <AreaChart data={stats.monthlySales}>
                 <defs>
                    <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                     <stop offset="5%" stopColor={theme === "dark" ? "#FB7185" : "#F43F5E"} stopOpacity={0.3}/>
-                     <stop offset="95%" stopColor={theme === "dark" ? "#FB7185" : "#F43F5E"} stopOpacity={0}/>
+                     <stop offset="5%" stopColor="#111111" stopOpacity={0.2}/>
+                     <stop offset="95%" stopColor="#111111" stopOpacity={0}/>
                    </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={theme === "dark" ? "#1e293b" : "#e2e8f0"} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
                 <XAxis 
                   dataKey="name" 
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: theme === "dark" ? "#94A3B8" : "#64748B", fontSize: 12 }}
+                  tick={{ fill: "#6b7280", fontSize: 12, fontWeight: 700 }}
                   dy={10}
                 />
                 <YAxis 
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: theme === "dark" ? "#94A3B8" : "#64748B", fontSize: 12 }}
+                  tick={{ fill: "#6b7280", fontSize: 12, fontWeight: 700 }}
                   tickFormatter={(value) => `₹${value}`}
                   dx={-10}
                 />
                 <Tooltip 
                   contentStyle={{ 
-                    backgroundColor: theme === "dark" ? "#0F172A" : "#FFFFFF",
-                    borderColor: theme === "dark" ? "#1E293B" : "#F1F5F9",
-                    borderRadius: '16px',
-                    color: theme === "dark" ? "#F8FAFC" : "#0F172A",
-                    boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+                    backgroundColor: "#ffffff",
+                    borderColor: "#e5e7eb",
+                    borderRadius: '0.375rem',
+                    color: "#111111",
+                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
                     borderWidth: '1px'
                   }}
                   itemStyle={{
-                    color: theme === "dark" ? "#FB7185" : "#F43F5E",
-                    fontWeight: 'bold'
+                    color: "#111111",
+                    fontWeight: '900'
                   }}
                 />
                 <Area 
                   type="monotone" 
                   dataKey="revenue" 
-                  stroke={theme === "dark" ? "#FB7185" : "#F43F5E"} 
+                  stroke="#111111" 
                   fillOpacity={1} 
                   fill="url(#colorRevenue)" 
-                  strokeWidth={4}
-                  activeDot={{ r: 8, stroke: theme === "dark" ? "#FB7185" : "#F43F5E", strokeWidth: 2, fill: theme === "dark" ? "#0F172A" : "#FFFFFF" }}
+                  strokeWidth={3}
+                  activeDot={{ r: 6, stroke: "#111111", strokeWidth: 2, fill: "#ffffff" }}
                 />
               </AreaChart>
             </ResponsiveContainer>
@@ -183,4 +163,4 @@ export default function Dashboard() {
       </div>
     </div>
   )
-};
+}

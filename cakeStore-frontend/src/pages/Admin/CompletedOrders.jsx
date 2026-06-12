@@ -1,17 +1,11 @@
 import { useState, useEffect } from "react";
-import { useTheme } from "../../context/ThemeContext";
-import { Search, Eye, ChevronDown, Check, Clock, Truck, ChefHat, XCircle, Package, User, Mail, MapPin, CreditCard, History, DollarSign } from "lucide-react";
+import { Search, Eye, ChevronDown, Check, Clock, Truck, ChefHat, XCircle, Package, User, Mail, MapPin, CreditCard, History, Phone } from "lucide-react";
 import { getAdminOrders, updateAdminOrderStatus } from "../../api/admin.api";
 import { useAdmin } from "../../context/AdminContext";
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
 
 const STATUS_OPTIONS = ["Pending", "Baking", "Out for Delivery", "Delivered", "Cancelled"];
 
 export default function CompletedOrders() {
-  const { theme } = useTheme();
   const { refreshAdminState } = useAdmin();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -42,10 +36,15 @@ export default function CompletedOrders() {
     try {
       setUpdatingId(orderId);
       await updateAdminOrderStatus(orderId, newStatus);
-      // If status changed from Delivered, remove from this list
-      if (newStatus !== "Delivered") {
+      
+      if (newStatus !== "Delivered" && newStatus !== "Cancelled") {
+        // Moves back to active orders
         setOrders(orders.filter(order => order._id !== orderId));
+      } else {
+        // Stays in completed, just update the label
+        setOrders(orders.map(order => order._id === orderId ? { ...order, orderStatus: newStatus } : order));
       }
+
       refreshAdminState();
     } catch (error) {
       console.error("Failed to update status", error);
@@ -58,49 +57,49 @@ export default function CompletedOrders() {
     switch (status) {
       case 'Delivered': 
         return {
-          bg: theme === "dark" ? "bg-emerald-400/10" : "bg-emerald-50",
-          text: theme === "dark" ? "text-emerald-400" : "text-emerald-700",
-          ring: theme === "dark" ? "ring-emerald-400/20" : "ring-emerald-600/20",
+          bg: "bg-green-50",
+          text: "text-green-700",
+          ring: "border-green-200",
           icon: <Check className="h-3 w-3" />,
           label: "Delivered"
         };
       case 'Cancelled': 
         return {
-          bg: theme === "dark" ? "bg-rose-400/10" : "bg-rose-50",
-          text: theme === "dark" ? "text-rose-400" : "text-rose-700",
-          ring: theme === "dark" ? "ring-rose-400/20" : "ring-rose-600/20",
+          bg: "bg-red-50",
+          text: "text-red-700",
+          ring: "border-red-200",
           icon: <XCircle className="h-3 w-3" />,
           label: "Cancelled"
         };
       case 'Pending': 
         return {
-          bg: theme === "dark" ? "bg-amber-400/10" : "bg-amber-50",
-          text: theme === "dark" ? "text-amber-400" : "text-amber-700",
-          ring: theme === "dark" ? "ring-amber-400/20" : "ring-amber-600/20",
+          bg: "bg-orange-50",
+          text: "text-orange-700",
+          ring: "border-orange-200",
           icon: <Clock className="h-3 w-3" />,
           label: "Pending"
         };
       case 'Baking':
         return {
-          bg: theme === "dark" ? "bg-rose-400/10" : "bg-rose-50",
-          text: theme === "dark" ? "text-rose-300" : "text-rose-600",
-          ring: theme === "dark" ? "ring-rose-400/20" : "ring-rose-600/20",
+          bg: "bg-blue-50",
+          text: "text-blue-700",
+          ring: "border-blue-200",
           icon: <ChefHat className="h-3 w-3" />,
           label: "Baking"
         };
       case 'Out for Delivery':
         return {
-          bg: theme === "dark" ? "bg-blue-400/10" : "bg-blue-50",
-          text: theme === "dark" ? "text-blue-400" : "text-blue-700",
-          ring: theme === "dark" ? "ring-blue-400/20" : "ring-blue-600/20",
+          bg: "bg-purple-50",
+          text: "text-purple-700",
+          ring: "border-purple-200",
           icon: <Truck className="h-3 w-3" />,
           label: "Shipping"
         };
       default: 
         return {
-          bg: theme === "dark" ? "bg-slate-400/10" : "bg-slate-50",
-          text: theme === "dark" ? "text-slate-400" : "text-slate-700",
-          ring: theme === "dark" ? "ring-slate-400/20" : "ring-slate-600/20",
+          bg: "bg-gray-50",
+          text: "text-gray-700",
+          ring: "border-gray-200",
           icon: <Package className="h-3 w-3" />,
           label: status
         };
@@ -111,46 +110,26 @@ export default function CompletedOrders() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className={classNames(
-            "text-2xl font-bold tracking-tight flex items-center gap-3",
-            theme === "dark" ? "text-theme-dark-text" : "text-theme-light-text"
-          )}>
-            <History className="h-6 w-6 text-emerald-500" />
+          <h2 className="text-2xl font-black tracking-tight flex items-center gap-3 text-black">
+            <History className="h-6 w-6 text-black" />
             Completed Orders {orders.length > 0 && `(${orders.length})`}
           </h2>
-          <p className={classNames(
-            "mt-1 text-sm",
-            theme === "dark" ? "text-theme-dark-muted" : "text-theme-light-muted"
-          )}>
+          <p className="mt-1 text-sm font-medium text-gray-500">
             History of successfully delivered orders.
           </p>
         </div>
 
         {/* Revenue Summary Card */}
         {!loading && orders.length > 0 && (
-          <div className={classNames(
-            "px-6 py-3 rounded-2xl border shadow-lg flex items-center gap-4 transition-all duration-500 hover:scale-[1.02] backdrop-blur-md",
-            theme === "dark" 
-              ? "bg-emerald-500/10 border-emerald-500/20 shadow-emerald-500/5 hover:border-emerald-500/40" 
-              : "bg-emerald-50/80 border-emerald-100 shadow-emerald-500/10 hover:border-emerald-200"
-          )}>
-            <div className={classNames(
-              "p-2.5 rounded-xl transition-colors duration-300",
-              theme === "dark" ? "bg-emerald-500/20 text-emerald-400 group-hover:bg-emerald-500/30" : "bg-theme-cream-solid text-emerald-600 shadow-sm"
-            )}>
-              <span className="text-xl font-bold">₹</span>
+          <div className="px-6 py-3 rounded-md border border-gray-200 bg-white shadow-sm flex items-center gap-4">
+            <div className="p-2.5 rounded-md bg-gray-50 text-black border border-gray-200">
+              <span className="text-xl font-black">₹</span>
             </div>
             <div>
-              <p className={classNames(
-                "text-[10px] font-black uppercase tracking-widest opacity-60",
-                theme === "dark" ? "text-emerald-400 font-bold" : "text-emerald-700"
-              )}>
+              <p className="text-[10px] font-black uppercase tracking-[2px] text-gray-500">
                 History Revenue
               </p>
-              <p className={classNames(
-                "text-2xl font-black",
-                theme === "dark" ? "text-emerald-400" : "text-emerald-700 font-black"
-              )}>
+              <p className="text-2xl font-black text-black">
                 ₹{orders.reduce((acc, o) => acc + (o.totalAmount || 0), 0).toLocaleString()}
               </p>
             </div>
@@ -158,112 +137,87 @@ export default function CompletedOrders() {
         )}
       </div>
 
-      <div className={classNames(
-        "flex items-center justify-between p-4 rounded-xl border shadow-sm transition-colors duration-300",
-        theme === "dark" ? "bg-theme-dark-card border-theme-dark-border" : "bg-theme-light-card border-theme-light-border"
-      )}>
+      <div className="flex items-center justify-between p-4 rounded-md border border-gray-200 bg-white shadow-sm">
         <div className="relative max-w-sm w-full">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <Search className={classNames("h-5 w-5", theme === "dark" ? "text-theme-dark-muted" : "text-theme-light-muted")} aria-hidden="true" />
+            <Search className="h-5 w-5 text-gray-400" aria-hidden="true" />
           </div>
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className={classNames(
-              "block w-full rounded-lg border-0 py-2.5 pl-10 pr-3 shadow-sm ring-1 ring-inset sm:text-sm sm:leading-6 transition-all duration-300",
-              theme === "dark" 
-                ? "bg-theme-dark-bg text-theme-dark-text ring-theme-dark-border placeholder:text-theme-dark-muted focus:ring-2 focus:ring-theme-dark-primary" 
-                : "bg-theme-light-bg text-theme-light-text ring-theme-light-border placeholder:text-theme-light-muted focus:ring-2 focus:ring-theme-light-primary"
-            )}
+            className="block w-full rounded-md border border-gray-200 py-2.5 pl-10 pr-3 shadow-sm focus:border-black focus:ring-1 focus:ring-black sm:text-sm sm:leading-6 bg-white text-black transition-colors"
             placeholder="Search within history..."
           />
         </div>
       </div>
 
       {loading ? (
-        <div className={classNames(
-          "flex flex-col items-center justify-center p-20 rounded-xl border shadow-sm transition-colors duration-300",
-          theme === "dark" ? "bg-theme-dark-card border-theme-dark-border" : "bg-theme-light-card border-theme-light-border"
-        )}>
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-rose-500 border-t-transparent mb-4"></div>
-          <p className={theme === "dark" ? "text-theme-dark-muted" : "text-theme-light-muted"}>Loading history...</p>
+        <div className="flex flex-col items-center justify-center p-20 rounded-md border border-gray-200 bg-white shadow-sm">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-black mb-4"></div>
+          <p className="font-medium text-gray-500">Loading history...</p>
         </div>
       ) : orders.length === 0 ? (
-        <div className={classNames(
-          "flex flex-col items-center justify-center p-20 rounded-3xl border shadow-sm transition-all duration-500 animate-in fade-in zoom-in h-[400px]",
-          theme === "dark" ? "bg-theme-dark-card border-theme-dark-border" : "bg-theme-light-card border-theme-light-border"
-        )}>
-          <div className={classNames(
-            "h-24 w-24 mb-6 rounded-full flex items-center justify-center shadow-inner transition-colors duration-500",
-            theme === "dark" ? "bg-slate-800 text-emerald-500/30" : "bg-emerald-50 text-emerald-600/20"
-          )}>
-            <History className="h-10 w-10 animate-pulse duration-[4000ms]" />
+        <div className="flex flex-col items-center justify-center p-20 rounded-md border border-gray-200 bg-white shadow-sm h-[400px]">
+          <div className="h-24 w-24 mb-6 rounded-md flex items-center justify-center bg-gray-50 border border-gray-200 text-gray-300">
+            <History className="h-10 w-10" />
           </div>
-          <h3 className={classNames("text-xl font-black", theme === "dark" ? "text-theme-dark-text" : "text-theme-light-text")}>
+          <h3 className="text-xl font-black text-black">
             No completed orders
           </h3>
-          <p className={classNames("mt-2 text-sm max-w-xs text-center font-medium", theme === "dark" ? "text-theme-dark-muted" : "text-theme-light-muted")}>
+          <p className="mt-2 text-sm max-w-xs text-center font-medium text-gray-500">
             Your fulfillment history is empty. Orders appear here once they are marked as Delivered.
           </p>
         </div>
       ) : (
-        <div className={classNames(
-          "rounded-2xl shadow-sm border transition-colors duration-300",
-          theme === "dark" ? "bg-theme-dark-card border-theme-dark-border" : "bg-theme-light-card border-theme-light-border"
-        )}>
+        <div className="rounded-md shadow-sm border border-gray-200 bg-white">
           <div className="overflow-x-auto pb-24">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
-              <thead className={classNames(
-                theme === "dark" ? "bg-theme-dark-bg/50 text-theme-dark-muted" : "bg-theme-light-bg text-theme-light-muted"
-              )}>
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50 text-gray-500">
                 <tr>
-                  <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6">Order ID</th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold">Customer</th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold">Items</th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold">Qty</th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold">Total</th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold">Status</th>
+                  <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-xs font-black uppercase tracking-widest sm:pl-6">Order ID</th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-xs font-black uppercase tracking-widest">Customer</th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-xs font-black uppercase tracking-widest">Items</th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-xs font-black uppercase tracking-widest">Qty</th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-xs font-black uppercase tracking-widest">Total</th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-xs font-black uppercase tracking-widest">Status</th>
                   <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
                     <span className="sr-only">Actions</span>
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-slate-800">
+              <tbody className="divide-y divide-gray-200">
                  {orders.filter(order => 
                     order._id.toLowerCase().includes(searchQuery.toLowerCase()) ||
                     order.user?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                     order.user?.email?.toLowerCase().includes(searchQuery.toLowerCase())
                  ).map((order) => (
-                  <tr key={order._id} className={classNames(
-                    "transition-all duration-300 group relative",
-                    theme === "dark" ? "hover:bg-theme-dark-bg/80" : "hover:bg-theme-light-bg/80"
-                  )}>
-                    <td className="whitespace-nowrap py-5 pl-4 pr-3 sm:pl-6">
-                      <div className={classNames("font-mono font-bold text-sm", theme === "dark" ? "text-theme-dark-text" : "text-theme-light-text")}>
+                  <tr key={order._id} className="transition-colors hover:bg-gray-50 group">
+                    <td className="whitespace-nowrap py-4 pl-4 pr-3 sm:pl-6">
+                      <div className="font-mono font-bold text-sm text-black">
                         #{order._id.substring(order._id.length - 6).toUpperCase()}
                       </div>
-                      <div className={classNames("text-[11px] mt-1 font-medium", theme === "dark" ? "text-theme-dark-muted" : "text-theme-light-muted")}>
+                      <div className="text-[11px] mt-1 font-medium text-gray-500">
                         {new Date(order.createdAt).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}
                       </div>
                     </td>
-                     <td className="whitespace-nowrap px-3 py-5">
-                      <div className={classNames("font-black text-sm", theme === "dark" ? "text-theme-dark-text" : "text-theme-light-text")}>
+                     <td className="whitespace-nowrap px-3 py-4">
+                      <div className="font-bold text-sm text-black">
                         {order.user?.name || "Guest"}
                       </div>
-                      <div className={classNames("text-[11px] mt-0.5 font-bold opacity-60", theme === "dark" ? "text-theme-dark-muted" : "text-theme-light-muted")}>
+                      <div className="text-[11px] mt-0.5 font-medium text-gray-500">
                         {order.user?.email}
                       </div>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-5">
+                    <td className="whitespace-nowrap px-3 py-4">
                       <div className="flex flex-col min-w-0">
                         {order.items?.length > 0 && (
                           <>
-                            <span className={classNames("text-[13px] font-black truncate max-w-[200px]", theme === "dark" ? "text-white" : "text-slate-900")}>
+                            <span className="text-[13px] font-bold truncate max-w-[200px] text-black">
                               {order.items[0]?.product?.name || "Product"}
                             </span>
                             {order.items.length > 1 && (
-                              <span className="text-[10px] opacity-70 font-black uppercase tracking-widest mt-0.5">
+                              <span className="text-[10px] font-bold uppercase tracking-widest mt-0.5 text-gray-500">
                                 + {order.items.length - 1} more items
                               </span>
                             )}
@@ -271,21 +225,20 @@ export default function CompletedOrders() {
                         )}
                       </div>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-5">
-                       <div className={classNames("flex flex-col", theme === "dark" ? "text-theme-dark-text" : "text-theme-light-text")}>
-                          <span className="text-sm font-black">
-                             {order.items[0]?.quantity || 1} <span className="text-xs opacity-50 font-medium ml-0.5">pc{order.items[0]?.quantity > 1 ? 's' : ''}</span>
+                    <td className="whitespace-nowrap px-3 py-4">
+                       <div className="flex flex-col text-black">
+                          <span className="text-sm font-bold">
+                             {order.items[0]?.quantity || 1} <span className="text-xs font-medium text-gray-500 ml-0.5">pc{order.items[0]?.quantity > 1 ? 's' : ''}</span>
                           </span>
                        </div>
                     </td>
-                    <td className={classNames("whitespace-nowrap px-3 py-5 text-base font-black", theme === "dark" ? "text-theme-dark-text" : "text-theme-light-text")}>
+                    <td className="whitespace-nowrap px-3 py-4 text-base font-black text-black">
                       ₹{order.totalAmount?.toFixed(2)}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-5 text-sm">
+                    <td className="whitespace-nowrap px-3 py-4 text-sm">
                       <StatusDropdown 
                         currentStatus={order.orderStatus} 
                         onChange={(status) => handleStatusChange(order._id, status)}
-                        theme={theme}
                         getStatusConfig={getStatusConfig}
                         isUpdating={updatingId === order._id}
                       />
@@ -293,10 +246,7 @@ export default function CompletedOrders() {
                      <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                       <button 
                         onClick={() => setSelectedOrder(order)}
-                        className={classNames(
-                          "inline-flex p-2 rounded-xl transition-all hover:scale-110 shadow-sm",
-                          theme === "dark" ? "text-theme-dark-primary bg-slate-800 hover:bg-slate-700" : "text-theme-light-primary bg-rose-50 hover:bg-rose-100"
-                        )}
+                        className="inline-flex p-2 rounded-md transition-all hover:bg-gray-100 border border-gray-200 shadow-sm text-black bg-white"
                       >
                         <Eye className="h-4 w-4" />
                         <span className="sr-only">View Order</span>
@@ -318,7 +268,6 @@ export default function CompletedOrders() {
         <OrderDetailsModal 
           order={selectedOrder} 
           onClose={() => setSelectedOrder(null)} 
-          theme={theme}
           getStatusConfig={getStatusConfig}
         />
       )}
@@ -326,39 +275,32 @@ export default function CompletedOrders() {
   );
 }
 
-const StatusDropdown = ({ currentStatus, onChange, theme, getStatusConfig, isUpdating }) => {
+const StatusDropdown = ({ currentStatus, onChange, getStatusConfig, isUpdating }) => {
   const [isOpen, setIsOpen] = useState(false);
   const config = getStatusConfig(currentStatus);
 
   const options = STATUS_OPTIONS;
+  const isLocked = currentStatus === "Delivered" || currentStatus === "Cancelled";
 
   return (
     <div className="relative">
       <button
         type="button"
-        disabled={isUpdating}
+        disabled={isUpdating || isLocked}
         onClick={() => setIsOpen(!isOpen)}
-        className={classNames(
-          "flex items-center justify-between w-full min-w-[150px] px-4 py-2.5 rounded-xl text-[13px] font-black border-2 transition-all duration-300 ring-1",
-          config.bg, config.text, config.ring,
-          isOpen ? "ring-rose-500/50 border-rose-500/50 shadow-lg shadow-rose-500/10" : "border-transparent",
-          isUpdating ? "opacity-50 cursor-wait" : "hover:scale-105 active:scale-95"
-        )}
+        className={`flex items-center justify-between w-full min-w-[150px] px-3 py-2 rounded-md text-xs font-bold border ${config.bg} ${config.text} ${config.ring} ${isUpdating ? "opacity-50 cursor-wait" : isLocked ? "opacity-75 cursor-not-allowed" : "hover:brightness-95"}`}
       >
         <span className="flex items-center gap-2.5">
-           {isUpdating ? <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" /> : config.icon}
+           {isUpdating ? <div className="h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" /> : config.icon}
            {config.label}
         </span>
-        <ChevronDown className={classNames("h-3.5 w-3.5 transition-transform duration-300", isOpen ? "rotate-180" : "")} />
+        {!isLocked && <ChevronDown className={`h-3.5 w-3.5 transition-transform ${isOpen ? "rotate-180" : ""}`} />}
       </button>
 
-      {isOpen && (
+      {isOpen && !isLocked && (
         <>
           <div className="fixed inset-0 z-[45]" onClick={() => setIsOpen(false)} />
-          <div className={classNames(
-            "absolute left-0 mt-2 w-full min-w-[180px] rounded-2xl shadow-2xl ring-1 ring-black ring-opacity-5 z-[100] animate-in fade-in zoom-in duration-200 origin-top",
-            theme === "dark" ? "bg-slate-900 border border-slate-700" : "bg-theme-cream-solid border border-rose-100"
-          )}>
+          <div className="absolute left-0 mt-1 w-full min-w-[180px] rounded-md shadow-lg border border-gray-200 bg-white z-[100]">
             <div className="p-1">
               {options.map((opt) => {
                 const optConfig = getStatusConfig(opt);
@@ -370,20 +312,15 @@ const StatusDropdown = ({ currentStatus, onChange, theme, getStatusConfig, isUpd
                       onChange(opt);
                       setIsOpen(false);
                     }}
-                    className={classNames(
-                      "flex items-center justify-between w-full px-4 py-2.5 rounded-xl text-[12px] font-black transition-colors mb-0.5 last:mb-0",
-                      isSelected 
-                        ? (theme === "dark" ? "bg-slate-800 text-rose-400" : "bg-rose-50 text-rose-600")
-                        : (theme === "dark" ? "text-slate-400 hover:bg-slate-800 hover:text-slate-200" : "text-gray-600 hover:bg-gray-50 hover:text-rose-600")
-                    )}
+                    className={`flex items-center justify-between w-full px-3 py-2 rounded-sm text-xs font-bold transition-colors mb-0.5 last:mb-0 ${isSelected ? "bg-gray-100 text-black" : "text-gray-600 hover:bg-gray-50 hover:text-black"}`}
                   >
                     <span className="flex items-center gap-3">
-                       <span className={classNames("p-1 rounded-lg", optConfig.bg, optConfig.text)}>
+                       <span className={`p-1 rounded-sm border ${optConfig.bg} ${optConfig.text} ${optConfig.ring}`}>
                          {optConfig.icon}
                        </span>
                        {optConfig.label}
                     </span>
-                    {isSelected && <Check className="h-3.5 w-3.5 text-rose-500" />}
+                    {isSelected && <Check className="h-3 w-3 text-black" />}
                   </button>
                 );
               })}
@@ -395,71 +332,60 @@ const StatusDropdown = ({ currentStatus, onChange, theme, getStatusConfig, isUpd
   );
 };
 
-const OrderDetailsModal = ({ order, onClose, theme, getStatusConfig }) => {
+const OrderDetailsModal = ({ order, onClose, getStatusConfig }) => {
   const config = getStatusConfig(order.orderStatus);
   
   return (
     <div className="fixed inset-0 z-[100] overflow-y-auto">
       <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
         <div 
-          className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" 
+          className="fixed inset-0 bg-black/60 transition-opacity" 
           onClick={onClose}
         />
 
-        <div className={classNames(
-          "relative transform overflow-hidden rounded-3xl text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-2xl animate-in fade-in zoom-in duration-300",
-          theme === "dark" ? "bg-slate-900 border border-slate-800" : "bg-theme-cream-solid"
-        )}>
+        <div className="relative transform overflow-hidden rounded-md text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl bg-white border border-gray-200">
           {/* Header */}
-          <div className={classNames(
-            "px-6 py-4 flex items-center justify-between border-b",
-            theme === "dark" ? "border-slate-800" : "border-rose-50"
-          )}>
+          <div className="px-6 py-4 flex items-center justify-between border-b border-gray-200 bg-gray-50">
             <div>
-              <h3 className={classNames("text-lg font-black", theme === "dark" ? "text-white" : "text-slate-900")}>
+              <h3 className="text-lg font-black text-black">
                 Order Details
               </h3>
-              <p className={classNames("text-xs font-mono", theme === "dark" ? "text-slate-400" : "text-slate-500")}>
+              <p className="text-xs font-mono font-medium text-gray-500">
                 #{order._id.toUpperCase()}
               </p>
             </div>
-            <div className={classNames(
-              "flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider",
-              config.bg, config.text
-            )}>
+            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-wider border ${config.bg} ${config.text} ${config.ring}`}>
               {config.icon}
               {config.label}
             </div>
           </div>
 
-          <div className="p-6 space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
+          <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
             {/* Customer & Delivery Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <h4 className={classNames("text-[10px] font-black uppercase tracking-widest opacity-50 flex items-center gap-2", theme === "dark" ? "text-white" : "text-slate-900")}>
+              <div className="space-y-3">
+                <h4 className="text-[10px] font-black uppercase tracking-[2px] text-gray-500 flex items-center gap-2">
                   <User className="h-3 w-3" /> Customer Info
                 </h4>
-                <div className={classNames(
-                  "p-4 rounded-2xl border transition-colors",
-                  theme === "dark" ? "bg-slate-800/50 border-slate-700" : "bg-gray-50 border-gray-100"
-                )}>
-                  <p className={classNames("text-sm font-bold", theme === "dark" ? "text-white" : "text-slate-900")}>{order.user?.name || "Guest"}</p>
-                  <div className="flex items-center gap-2 mt-1 opacity-70">
-                    <Mail className="h-3 w-3" />
-                    <p className="text-xs font-medium">{order.user?.email}</p>
+                <div className="p-4 rounded-md border border-gray-200 bg-white">
+                  <p className="text-sm font-bold text-black">{order.user?.name || "Guest"}</p>
+                  <div className="flex items-center gap-2 mt-2">
+                    <Phone className="h-3 w-3 text-gray-400" />
+                    <p className="text-xs font-medium text-gray-600">{order.user?.phone || "No Phone"}</p>
+                  </div>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Mail className="h-3 w-3 text-gray-400" />
+                    <p className="text-xs font-medium text-gray-600">{order.user?.email}</p>
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <h4 className={classNames("text-[10px] font-black uppercase tracking-widest opacity-50 flex items-center gap-2", theme === "dark" ? "text-white" : "text-slate-900")}>
+              <div className="space-y-3">
+                <h4 className="text-[10px] font-black uppercase tracking-[2px] text-gray-500 flex items-center gap-2">
                   <MapPin className="h-3 w-3" /> Shipping Address
                 </h4>
-                <div className={classNames(
-                  "p-4 rounded-2xl border transition-colors",
-                  theme === "dark" ? "bg-slate-800/50 border-slate-700" : "bg-rose-50/30 border-rose-100"
-                )}>
-                  <p className="text-xs font-medium leading-relaxed">
+                <div className="p-4 rounded-md border border-gray-200 bg-white">
+                  <p className="text-xs font-medium leading-relaxed text-black">
                     {order.deliveryLocation?.address || "Address not specified"}
                   </p>
                 </div>
@@ -467,34 +393,32 @@ const OrderDetailsModal = ({ order, onClose, theme, getStatusConfig }) => {
             </div>
 
             {/* Order Items */}
-            <div className="space-y-4">
-              <h4 className={classNames("text-[10px] font-black uppercase tracking-widest opacity-50 flex items-center gap-2", theme === "dark" ? "text-white" : "text-slate-900")}>
+            <div className="space-y-3">
+              <h4 className="text-[10px] font-black uppercase tracking-[2px] text-gray-500 flex items-center gap-2">
                 <Package className="h-3 w-3" /> Items Summary
               </h4>
-              <div className={classNames(
-                "rounded-2xl border overflow-hidden",
-                theme === "dark" ? "border-slate-800" : "border-gray-100"
-              )}>
+              <div className="rounded-md border border-gray-200 overflow-hidden bg-white">
                 {order.items?.map((item, idx) => (
                   <div 
                     key={idx} 
-                    className={classNames(
-                      "flex items-center justify-between p-4 border-b last:border-0",
-                      theme === "dark" ? "border-slate-800 bg-slate-800/20" : "border-gray-50 bg-theme-cream-solid"
-                    )}
+                    className="flex items-center justify-between p-4 border-b border-gray-200 last:border-0"
                   >
                     <div className="flex items-center gap-4">
-                      {item.product?.image && (
-                        <img src={item.product?.image} className="h-10 w-10 rounded-xl object-cover" alt="" />
+                      {item.product?.image ? (
+                        <img src={item.product?.image} className="h-10 w-10 rounded-md object-cover border border-gray-200" alt="" />
+                      ) : (
+                        <div className="h-10 w-10 rounded-md border border-gray-200 bg-gray-50 flex items-center justify-center">
+                          <Package className="h-5 w-5 text-gray-400" />
+                        </div>
                       )}
                       <div>
-                        <p className={classNames("text-xs font-bold", theme === "dark" ? "text-white" : "text-slate-900")}>
+                        <p className="text-xs font-bold text-black">
                           {item.product?.name || "Deleted Product"}
                         </p>
-                        <p className="text-[10px] opacity-60 font-medium">Qty: {item.quantity}</p>
+                        <p className="text-[10px] font-medium text-gray-500 mt-0.5">Qty: {item.quantity}</p>
                       </div>
                     </div>
-                    <p className={classNames("text-xs font-black", theme === "dark" ? "text-rose-400" : "text-rose-600")}>
+                    <p className="text-xs font-black text-black">
                       ₹{((item.product?.price || 0) * (item.quantity || 1)).toFixed(2)}
                     </p>
                   </div>
@@ -503,36 +427,27 @@ const OrderDetailsModal = ({ order, onClose, theme, getStatusConfig }) => {
             </div>
 
             {/* Payment & Footer Summary */}
-            <div className={classNames(
-              "p-5 rounded-3xl flex flex-col sm:flex-row justify-between items-center gap-4",
-              theme === "dark" ? "bg-slate-800/80" : "bg-slate-900 text-white"
-            )}>
+            <div className="p-5 rounded-md border border-gray-200 bg-gray-50 flex flex-col sm:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-4">
-                <div className="p-3 bg-theme-cream-solid/10 rounded-2xl">
+                <div className="p-3 bg-white border border-gray-200 rounded-md text-black">
                    <CreditCard className="h-5 w-5" />
                 </div>
                 <div>
-                   <p className="text-[10px] font-black uppercase tracking-wider opacity-60">Payment Mode</p>
-                   <p className="text-sm font-bold">{order.paymentMethod || "COD"}</p>
+                   <p className="text-[10px] font-black uppercase tracking-[2px] text-gray-500">Payment Mode</p>
+                   <p className="text-sm font-bold text-black">{order.paymentMethod || "COD"}</p>
                 </div>
               </div>
               <div className="text-center sm:text-right">
-                 <p className="text-[10px] font-black uppercase tracking-wider opacity-60">Total Amount</p>
-                 <p className="text-2xl font-black">₹{order.totalAmount?.toFixed(2)}</p>
+                 <p className="text-[10px] font-black uppercase tracking-[2px] text-gray-500">Total Amount</p>
+                 <p className="text-2xl font-black text-black">₹{order.totalAmount?.toFixed(2)}</p>
               </div>
             </div>
           </div>
 
-          <div className={classNames(
-            "p-4 flex gap-3",
-            theme === "dark" ? "bg-slate-950/50" : "bg-gray-50"
-          )}>
+          <div className="p-4 flex gap-3 border-t border-gray-200 bg-gray-50">
             <button
               onClick={onClose}
-              className={classNames(
-                "flex-1 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all",
-                theme === "dark" ? "bg-slate-800 text-white hover:bg-slate-700" : "bg-theme-cream-solid border border-gray-200 text-slate-600 hover:bg-gray-100"
-              )}
+              className="flex-1 py-2.5 rounded-md font-bold text-sm bg-white border border-gray-300 text-black hover:bg-gray-100 transition-colors"
             >
               Close
             </button>

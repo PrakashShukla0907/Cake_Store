@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getProducts } from "../api/product.api";
 import ProductCard from "../components/ProductCard";
-import { useTheme } from "../context/ThemeContext";
-import { FaSearch } from "react-icons/fa";
 
 export default function Home() {
   const [products, setProducts] = useState([]);
@@ -11,7 +9,6 @@ export default function Home() {
   const [error, setError] = useState("");
   const [totalPages, setTotalPages] = useState(1);
   const [searchParams, setSearchParams] = useSearchParams();
-  const { theme } = useTheme();
 
   const currentPage = parseInt(searchParams.get("page")) || 1;
   const searchQuery = searchParams.get("search") || "";
@@ -19,14 +16,8 @@ export default function Home() {
   const fetchProducts = async (page = 1, search = "") => {
     setLoading(true);
     setError("");
-
     try {
-      const response = await getProducts({
-        page,
-        limit: 12,
-        ...(search && { search }),
-      });
-
+      const response = await getProducts({ page, limit: 12, ...(search && { search }) });
       setProducts(response.data.products || []);
       setTotalPages(response.data.totalPages || 1);
     } catch (err) {
@@ -37,16 +28,7 @@ export default function Home() {
     }
   };
 
-  useEffect(() => {
-    fetchProducts(currentPage, searchQuery);
-  }, [currentPage, searchQuery]);
-
-  const handleSearch = (value) => {
-    setSearchParams({
-      ...(value && { search: value }),
-      page: 1,
-    });
-  };
+  useEffect(() => { fetchProducts(currentPage, searchQuery); }, [currentPage, searchQuery]);
 
   const handlePageChange = (page) => {
     const params = new URLSearchParams();
@@ -56,57 +38,49 @@ export default function Home() {
   };
 
   return (
-    <div
-      className={classNames(
-        "min-h-screen pb-12 transition-colors duration-300",
-        theme === "dark"
-          ? "bg-slate-900 text-slate-200"
-          : "bg-theme-cream-gradient text-slate-800",
-      )}
-    >
+    <div className="min-h-screen bg-white text-black">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
-      {/* Products Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Error */}
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800/50 text-red-600 dark:text-red-400 px-4 py-3 rounded-xl mb-8 font-medium shadow-sm flex items-center gap-2">
-            <span className="shrink-0">⚠️</span> {error}
+          <div className="border border-gray-300 bg-gray-50 text-gray-800 px-4 py-3 rounded-md mb-8 text-sm font-medium flex items-center gap-2">
+            <span className="font-black">!</span> {error}
           </div>
         )}
 
-        {loading ? (
-          <div className="text-center py-20 flex flex-col items-center justify-center space-y-4">
-            <div className="w-12 h-12 border-4 border-rose-200 border-t-rose-500 rounded-full animate-spin"></div>
-            <p className="text-xl font-medium opacity-70">Loading delicious cakes...</p>
+        {/* Search result heading */}
+        {searchQuery && !loading && (
+          <div className="mb-8 pb-6 border-b border-gray-100">
+            <h2 className="text-2xl font-black text-black tracking-tight">
+              Results for &ldquo;{searchQuery}&rdquo;
+            </h2>
+            <p className="text-sm text-gray-500 mt-1">{products.length} cake{products.length !== 1 ? "s" : ""} found</p>
           </div>
+        )}
+
+        {/* Loading */}
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-32 gap-4">
+            <div className="w-8 h-8 border-2 border-gray-200 border-t-black rounded-full animate-spin" />
+            <p className="text-sm font-semibold text-gray-400 uppercase tracking-widest">Loading...</p>
+          </div>
+
+        /* Empty */
         ) : products.length === 0 ? (
-          <div className="text-center py-24 bg-theme-cream-solid/50 dark:bg-slate-800/10 backdrop-blur-sm rounded-3xl border border-white/50 dark:border-slate-700 shadow-xl">
-            <p className="text-5xl mb-6">😢</p>
-            <h3 className="text-2xl font-bold mb-2">No cakes found</h3>
-            <p className="opacity-70 font-medium">
+          <div className="text-center py-28 border border-gray-100 rounded-lg bg-gray-50">
+            <p className="text-5xl mb-4">😢</p>
+            <h3 className="text-xl font-black text-black mb-2">No cakes found</h3>
+            <p className="text-sm text-gray-500">
               {searchQuery
                 ? `We couldn't find any cakes matching "${searchQuery}"`
                 : "Check back soon for freshly baked goods!"}
             </p>
           </div>
+
+        /* Products grid */
         ) : (
           <>
-            {searchQuery && (
-              <div className="mb-10 flex items-center justify-between">
-                <h2
-                  className={classNames(
-                    "text-3xl sm:text-4xl font-extrabold tracking-tight",
-                    theme === "dark" 
-                      ? "text-white" 
-                      : "bg-gradient-to-r from-rose-500 to-pink-600 bg-clip-text text-transparent"
-                  )}
-                >
-                  Results for "{searchQuery}"
-                </h2>
-              </div>
-            )}
-
-            {/* Products Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8 mb-16">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mb-14">
               {products.map((product) => (
                 <ProductCard key={product._id} product={product} />
               ))}
@@ -114,55 +88,36 @@ export default function Home() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex justify-center items-center gap-2 flex-wrap mt-8">
-                {currentPage > 1 && (
-                  <button
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    className={classNames(
-                      "px-4 py-2.5 rounded-xl font-bold transition-all shadow-sm hover:shadow-md transform hover:-translate-y-0.5",
-                      theme === "dark"
-                        ? "bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700"
-                        : "bg-theme-cream-solid text-slate-700 hover:text-rose-600 border border-rose-100 hover:border-rose-200",
-                    )}
-                  >
-                    ← Prev
-                  </button>
-                )}
+              <div className="flex justify-center items-center gap-2 flex-wrap">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage <= 1}
+                  className="px-4 py-2 rounded-md border border-gray-300 text-sm font-bold text-black bg-white hover:bg-gray-50 hover:border-black transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  ← Prev
+                </button>
 
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                  (page) => (
-                    <button
-                      key={page}
-                      onClick={() => handlePageChange(page)}
-                      className={classNames(
-                        "w-10 h-10 flex items-center justify-center rounded-xl font-bold transition-all shadow-sm",
-                        currentPage === page
-                          ? theme === "dark"
-                            ? "bg-rose-500 text-white shadow-rose-900/20"
-                            : "bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-rose-200"
-                          : theme === "dark"
-                            ? "bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700"
-                            : "bg-theme-cream-solid text-slate-600 hover:text-rose-600 hover:bg-rose-50 border border-gray-100",
-                      )}
-                    >
-                      {page}
-                    </button>
-                  ),
-                )}
-
-                {currentPage < totalPages && (
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                   <button
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    className={classNames(
-                      "px-4 py-2.5 rounded-xl font-bold transition-all shadow-sm hover:shadow-md transform hover:-translate-y-0.5",
-                      theme === "dark"
-                        ? "bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700"
-                        : "bg-theme-cream-solid text-slate-700 hover:text-rose-600 border border-rose-100 hover:border-rose-200",
-                    )}
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                    className={`w-9 h-9 flex items-center justify-center rounded-md text-sm font-black transition-all border ${
+                      currentPage === page
+                        ? "bg-black text-white border-black"
+                        : "bg-white text-gray-600 border-gray-300 hover:border-black hover:text-black"
+                    }`}
                   >
-                    Next →
+                    {page}
                   </button>
-                )}
+                ))}
+
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage >= totalPages}
+                  className="px-4 py-2 rounded-md border border-gray-300 text-sm font-bold text-black bg-white hover:bg-gray-50 hover:border-black transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  Next →
+                </button>
               </div>
             )}
           </>
@@ -170,8 +125,4 @@ export default function Home() {
       </div>
     </div>
   );
-}
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
 }

@@ -48,6 +48,12 @@ const orderSchema = new mongoose.Schema(
       default: "Pending",
     },
 
+    cancelledBy: {
+      type: String,
+      enum: ["User", "Admin", null],
+      default: null,
+    },
+
     paymentMethod: {
       type: String,
       default: "Cash on Delivery",

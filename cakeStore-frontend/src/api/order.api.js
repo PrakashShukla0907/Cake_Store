@@ -5,3 +5,4 @@ export const getMyOrders = () => api.get("/user/orders/my-orders");
 export const getAllOrders = () => api.get("/admin/orders");
 export const updateOrderStatus = (id, status) =>
   api.put(`/admin/orders/${id}`, { status });
+export const cancelOrder = (id) => api.patch(`/user/orders/${id}/cancel`);

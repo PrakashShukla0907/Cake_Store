@@ -39,8 +39,8 @@ export const addBanner = async (req, res) => {
       return res.status(400).json({ success: false, message: "Please upload an image" });
     }
 
-    // Create banner instantly with placeholder
-    const banner = await Banner.create({ image: "", active: true });
+    // Create banner instantly with placeholder (Mongoose string required: true fails on empty string)
+    const banner = await Banner.create({ image: "uploading...", active: true });
 
     res.status(200).json({ success: true, message: "Banner added", data: banner });
 

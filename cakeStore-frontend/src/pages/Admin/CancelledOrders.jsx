@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { Search, Eye, ChevronDown, Check, Clock, Truck, ChefHat, XCircle, Package, User, Mail, MapPin, CreditCard, Phone } from "lucide-react";
+import { Search, Eye, ChevronDown, Check, Clock, Truck, ChefHat, XCircle, Package, User, Mail, MapPin, CreditCard, History, Phone } from "lucide-react";
 import { getAdminOrders, updateAdminOrderStatus } from "../../api/admin.api";
 import { useAdmin } from "../../context/AdminContext";
 
 const STATUS_OPTIONS = ["Pending", "Baking", "Out for Delivery", "Delivered", "Cancelled"];
 
-export default function AdminOrders() {
+export default function CancelledOrders() {
   const { refreshAdminState } = useAdmin();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,9 +17,10 @@ export default function AdminOrders() {
     try {
       setLoading(true);
       const data = await getAdminOrders();
+      // Filter for only cancelled orders
       const allOrders = data?.orders || data || [];
-      const active = allOrders.filter(o => o.orderStatus !== "Delivered" && o.orderStatus !== "Cancelled");
-      setOrders(active);
+      const cancelled = allOrders.filter(o => o.orderStatus === "Cancelled");
+      setOrders(cancelled);
     } catch (error) {
       console.error("Failed to fetch orders:", error);
     } finally {
@@ -36,12 +37,14 @@ export default function AdminOrders() {
       setUpdatingId(orderId);
       await updateAdminOrderStatus(orderId, newStatus);
       
-      if (newStatus === "Delivered" || newStatus === "Cancelled") {
+      if (newStatus !== "Delivered" && newStatus !== "Cancelled") {
+        // Moves back to active orders
         setOrders(orders.filter(order => order._id !== orderId));
       } else {
+        // Stays in completed, just update the label
         setOrders(orders.map(order => order._id === orderId ? { ...order, orderStatus: newStatus } : order));
       }
-      
+
       refreshAdminState();
     } catch (error) {
       console.error("Failed to update status", error);
@@ -107,14 +110,16 @@ export default function AdminOrders() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-black tracking-tight text-black">
-            Orders {orders.length > 0 && `(${orders.length})`}
+          <h2 className="text-2xl font-black tracking-tight flex items-center gap-3 text-black">
+            <XCircle className="h-6 w-6 text-red-500" />
+            Cancelled Orders {orders.length > 0 && `(${orders.length})`}
           </h2>
           <p className="mt-1 text-sm font-medium text-gray-500">
-            View and update order processing statuses.
+            History of cancelled or rejected orders.
           </p>
         </div>
 
+        {/* Revenue Summary Card */}
         {!loading && orders.length > 0 && (
           <div className="px-6 py-3 rounded-md border border-gray-200 bg-white shadow-sm flex items-center gap-4">
             <div className="p-2.5 rounded-md bg-gray-50 text-black border border-gray-200">
@@ -122,7 +127,7 @@ export default function AdminOrders() {
             </div>
             <div>
               <p className="text-[10px] font-black uppercase tracking-[2px] text-gray-500">
-                Pending Revenue
+                Lost Revenue
               </p>
               <p className="text-2xl font-black text-black">
                 ₹{orders.reduce((acc, o) => acc + (o.totalAmount || 0), 0).toLocaleString()}
@@ -141,8 +146,8 @@ export default function AdminOrders() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="block w-full rounded-md border border-gray-200 py-2.5 pl-10 pr-3 shadow-sm focus:border-black focus:ring-1 focus:ring-black sm:text-sm sm:leading-6 bg-white text-black"
-            placeholder="Search by order ID, name or email..."
+            className="block w-full rounded-md border border-gray-200 py-2.5 pl-10 pr-3 shadow-sm focus:border-black focus:ring-1 focus:ring-black sm:text-sm sm:leading-6 bg-white text-black transition-colors"
+            placeholder="Search within history..."
           />
         </div>
       </div>
@@ -150,18 +155,18 @@ export default function AdminOrders() {
       {loading ? (
         <div className="flex flex-col items-center justify-center p-20 rounded-md border border-gray-200 bg-white shadow-sm">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-black mb-4"></div>
-          <p className="font-medium text-gray-500">Loading orders...</p>
+          <p className="font-medium text-gray-500">Loading history...</p>
         </div>
       ) : orders.length === 0 ? (
         <div className="flex flex-col items-center justify-center p-20 rounded-md border border-gray-200 bg-white shadow-sm h-[400px]">
-          <div className="h-24 w-24 mb-6 rounded-md flex items-center justify-center bg-gray-50 text-gray-300 border border-gray-200">
-            <Package className="h-10 w-10" />
+          <div className="h-24 w-24 mb-6 rounded-md flex items-center justify-center bg-gray-50 border border-gray-200 text-gray-300">
+            <XCircle className="h-10 w-10 text-gray-400" />
           </div>
           <h3 className="text-xl font-black text-black">
-            No active orders
+            No cancelled orders
           </h3>
           <p className="mt-2 text-sm max-w-xs text-center font-medium text-gray-500">
-            All caught up! New customer orders will appear here automatically as they arrive.
+            You have no cancelled orders on record.
           </p>
         </div>
       ) : (
@@ -187,7 +192,7 @@ export default function AdminOrders() {
                     order.user?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                     order.user?.email?.toLowerCase().includes(searchQuery.toLowerCase())
                  ).map((order) => (
-                  <tr key={order._id} className="transition-all hover:bg-gray-50">
+                  <tr key={order._id} className="transition-colors hover:bg-gray-50 group">
                     <td className="whitespace-nowrap py-4 pl-4 pr-3 sm:pl-6">
                       <div className="font-mono font-bold text-sm text-black">
                         #{order._id.substring(order._id.length - 6).toUpperCase()}
@@ -225,11 +230,6 @@ export default function AdminOrders() {
                           <span className="text-sm font-bold">
                              {order.items[0]?.quantity || 1} <span className="text-xs font-medium text-gray-500 ml-0.5">pc{order.items[0]?.quantity > 1 ? 's' : ''}</span>
                           </span>
-                          {order.items.length > 1 && (
-                            <span className="text-[10px] font-bold mt-1.5 px-2 py-0.5 rounded-sm self-start bg-gray-100 text-gray-600 border border-gray-200">
-                               {order.items.reduce((acc, item) => acc + (item.quantity || 1), 0)} Total
-                            </span>
-                          )}
                        </div>
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-base font-black text-black">
@@ -242,6 +242,13 @@ export default function AdminOrders() {
                         getStatusConfig={getStatusConfig}
                         isUpdating={updatingId === order._id}
                       />
+                      {order.cancelledBy && (
+                        <div className="mt-2 text-center">
+                          <span className="inline-block px-2 py-0.5 rounded-sm bg-gray-100 border border-gray-200 text-[9px] font-black uppercase tracking-[1px] text-gray-500">
+                            By: {order.cancelledBy}
+                          </span>
+                        </div>
+                      )}
                     </td>
                      <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                       <button 
@@ -350,9 +357,16 @@ const OrderDetailsModal = ({ order, onClose, getStatusConfig }) => {
               <h3 className="text-lg font-black text-black">
                 Order Details
               </h3>
-              <p className="text-xs font-mono font-medium text-gray-500">
-                #{order._id.toUpperCase()}
-              </p>
+              <div className="flex items-center gap-2 mt-0.5">
+                <p className="text-xs font-mono font-medium text-gray-500">
+                  #{order._id.toUpperCase()}
+                </p>
+                {order.cancelledBy && (
+                  <span className="px-1.5 py-0.5 rounded-sm bg-gray-200 text-[9px] font-black uppercase tracking-widest text-gray-600">
+                    Cancelled By: {order.cancelledBy}
+                  </span>
+                )}
+              </div>
             </div>
             <div className={`flex items-center gap-2 px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-wider border ${config.bg} ${config.text} ${config.ring}`}>
               {config.icon}

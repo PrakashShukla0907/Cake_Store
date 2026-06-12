@@ -98,11 +98,29 @@ export const cancelOrder = async (req, res) => {
       });
     }
 
-    await order.deleteOne();
+    const timeElapsed = Date.now() - new Date(order.createdAt).getTime();
+    if (timeElapsed > 2 * 60 * 1000) {
+      return res.status(400).json({
+        success: false,
+        message: "Cancellation time limit (2 minutes) has expired.",
+      });
+    }
+
+    order.orderStatus = "Cancelled";
+    order.cancelledBy = "User";
+    await order.save();
+
+    // Notify admin in the background
+    Notification.create({
+      type: "Order Cancelled",
+      message: `Order #${order._id.toString().substring(order._id.toString().length - 6).toUpperCase()} was cancelled by the customer.`,
+      data: { orderId: order._id },
+    }).catch((err) => console.error("Cancel order notification error:", err));
 
     res.json({
       success: true,
       message: "Order cancelled successfully",
+      order
     });
   } catch (error) {
     console.error("Cancel order error:", error);

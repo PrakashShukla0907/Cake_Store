@@ -24,20 +24,19 @@ const AdminDashboard    = lazy(() => import("./pages/Admin/Dashboard"));
 const AdminProducts     = lazy(() => import("./pages/Admin/Products"));
 const AdminOrders       = lazy(() => import("./pages/Admin/Orders"));
 const CompletedOrders   = lazy(() => import("./pages/Admin/CompletedOrders"));
+const CancelledOrders   = lazy(() => import("./pages/Admin/CancelledOrders"));
 const AdminBanners      = lazy(() => import("./pages/Admin/Banner"));
 const AdminUsers        = lazy(() => import("./pages/Admin/Users"));
 
 // Full-page loading spinner shown while a lazy chunk is being fetched
 function PageLoader() {
   return (
-    <div className="fixed inset-0 z-9999 flex flex-col items-center justify-center bg-theme-cream-gradient dark:bg-slate-950 gap-5">
+    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white gap-4">
       <div className="relative">
-        <div className="h-14 w-14 rounded-full border-4 border-rose-100 dark:border-slate-800" />
-        <div className="absolute inset-0 h-14 w-14 animate-spin rounded-full border-4 border-transparent border-t-rose-500" />
+        <div className="h-12 w-12 rounded-md border-2 border-gray-100" />
+        <div className="absolute inset-0 h-12 w-12 animate-spin rounded-md border-2 border-transparent border-t-black" />
       </div>
-      <p className="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest animate-pulse">
-        Loading…
-      </p>
+      <p className="text-xs font-black text-gray-300 uppercase tracking-widest">Loading…</p>
     </div>
   );
 }
@@ -72,6 +71,7 @@ function App() {
                 <Route path="products"            element={<AdminProducts />} />
                 <Route path="orders"              element={<AdminOrders />} />
                 <Route path="completed-orders"    element={<CompletedOrders />} />
+                <Route path="cancelled-orders"    element={<CancelledOrders />} />
                 <Route path="users"               element={<AdminUsers />} />
               </Route>
 

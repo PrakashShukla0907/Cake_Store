@@ -13,7 +13,7 @@ const orderRoutes = express.Router();
 orderRoutes.post("/", verifyToken, placeOrder);
 
 // Cancel order only if pending
-orderRoutes.patch("/:orderId/cancle", verifyToken, cancelOrder);
+orderRoutes.patch("/:orderId/cancel", verifyToken, cancelOrder);
 
 // Get my orders
 orderRoutes.get("/my-orders", verifyToken, getMyOrders);

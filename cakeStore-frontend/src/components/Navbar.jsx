@@ -3,18 +3,36 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from "@headlessui/react";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { FaShoppingCart, FaSignOutAlt, FaBoxOpen, FaTags, FaPlus, FaUtensils, FaChartBar, FaUsers, FaImage, FaSearch, FaCheckCircle } from "react-icons/fa";
 import { logoutUser } from "../api/auth.api";
 import { AuthContext } from "../context/AuthContext";
 import { useContext, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useTheme } from "../context/ThemeContext";
-import ThemeToggle from "./ThemeToggle";
-import logo from "../assets/logo_bakery.png";
 import { useAdmin } from "../context/AdminContext";
-import { Bell, Trash2, X } from "lucide-react";
-import { markAllNotificationsRead, deleteAdminNotification, deleteAllAdminNotifications } from "../api/notification.api";
+import {
+  Bell,
+  Trash2,
+  X,
+  Search,
+  Home,
+  ShoppingCart,
+  ClipboardList,
+  LayoutDashboard,
+  Package,
+  Users,
+  Image,
+  CheckSquare,
+  Plus,
+  LogOut,
+  LogIn,
+  UserPlus,
+  BarChart2,
+  Menu as MenuIcon,
+} from "lucide-react";
+import {
+  markAllNotificationsRead,
+  deleteAdminNotification,
+  deleteAllAdminNotifications,
+} from "../api/notification.api";
 import { useRef, useEffect } from "react";
 
 function classNames(...classes) {
@@ -24,10 +42,8 @@ function classNames(...classes) {
 export default function Navbar() {
   const { user, loading, logout } = useContext(AuthContext);
   const navigate = useNavigate();
-  const { theme } = useTheme();
-  const [open, setOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
-  
+
   const { notifications, refreshAdminState } = useAdmin();
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationRef = useRef(null);
@@ -77,214 +93,144 @@ export default function Navbar() {
 
   const cartCount = user?.cart?.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
-  // Removed local handleLogout to use unified context logout
-
   const navigationItems = [
-    { name: "🏠 Home", href: "/" },
-    ...(user && user.role !== 'admin' ? [{ name: "📦 My Orders", href: "/orders" }] : []),
+    { name: "Home", href: "/", icon: Home },
+    ...(user && user.role !== "admin"
+      ? [{ name: "My Orders", href: "/orders", icon: ClipboardList }]
+      : []),
+  ];
+
+  const adminLinks = [
+    { to: "/admin",                  label: "Dashboard",  icon: BarChart2      },
+    { to: "/admin/orders",           label: "Orders",     icon: ClipboardList  },
+    { to: "/admin/completed-orders", label: "Completed",  icon: CheckSquare    },
+    { to: "/admin/products",         label: "Products",   icon: Package        },
+    { to: "/admin/users",            label: "Users",      icon: Users          },
+    { to: "/admin/banner",           label: "Banners",    icon: Image          },
+  ];
+
+  const adminMobileLinks = [
+    { to: "/admin",                  label: "Overview Dashboard",  sub: "Statistics & Analytics",   icon: BarChart2     },
+    { to: "/admin/orders",           label: "Order Fulfillment",   sub: "Manage Customer Orders",   icon: ClipboardList },
+    { to: "/admin/completed-orders", label: "Completed Orders",    sub: "Fulfillment History",      icon: CheckSquare   },
+    { to: "/admin/products",         label: "Catalog Management",  sub: "Inventory & Pricing",      icon: Package       },
+    { to: "/admin/users",            label: "Customer Directory",  sub: "User Accounts",            icon: Users         },
+    { to: "/admin/banner",           label: "Marketing Banners",   sub: "Promotional Display",      icon: Image         },
   ];
 
   return (
     <Disclosure
       as="nav"
-      className={classNames(
-        "sticky top-0 z-50 border-b transition-all duration-300",
-        theme === "dark"
-          ? "bg-slate-900 border-slate-800 text-slate-100 shadow-md"
-          : "bg-theme-cream-solid border-gray-100 text-slate-800 shadow-sm"
-      )}
+      className="sticky top-0 z-50 bg-white border-b border-gray-200 text-black shadow-sm"
     >
       {({ close }) => (
         <>
           <div className="mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex h-16 justify-between items-center">
-              {/* Logo and Brand */}
-              <Link to="/" className="flex items-center gap-3 shrink-0 group">
-                <div className="relative hidden md:block">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-rose-400 to-pink-500 rounded-full blur opacity-40 group-hover:opacity-75 transition duration-300"></div>
-                  <img
-                    src={logo}
-                    alt="website logo"
-                    className="relative h-11 w-auto object-contain transform group-hover:scale-105 transition duration-300 drop-shadow-md pb-1"
-                  />
-                </div>
-                <span className={classNames(
-                  "text-xl font-extrabold tracking-tight",
-                  theme === "dark" ? "text-white" : "text-slate-900"
-                )}>
-                  BakeEase
+            <div className="flex h-16 justify-between items-center gap-4">
+
+              {/* ── Logo ── */}
+              <Link
+                to="/"
+                className="flex items-center shrink-0"
+                aria-label="Gopal Bakers Home"
+              >
+                <span className="text-lg font-black tracking-tight text-black">
+                  Gopal Bakers
                 </span>
               </Link>
 
-              {/* Desktop Navigation */}
-              <div className="hidden lg:flex items-center gap-6">
+              {/* ── Desktop Nav Links ── */}
+              <div className="hidden lg:flex items-center gap-1">
                 {navigationItems.map((item) => (
                   <Link
                     key={item.href}
                     to={item.href}
-                    className={classNames(
-                      "transition-colors font-semibold text-[15px]",
-                      theme === "dark" 
-                        ? "text-slate-300 hover:text-rose-400" 
-                        : "text-slate-600 hover:text-rose-600"
-                    )}
+                    className="px-3 py-2 rounded-md font-semibold text-[13px] text-gray-600 hover:text-black hover:bg-gray-100  :text-white :bg-gray-900 transition-all"
                   >
                     {item.name}
                   </Link>
                 ))}
 
-                {/* Admin Dynamic Menu Links - Full on XL, Dropdown on LG */}
-                {user?.role === "admin" && (
-                  <>
-                    <div className={classNames(
-                      "hidden xl:flex items-center gap-3 rounded-full px-4 py-1.5 border shadow-inner transition-colors",
-                      theme === "dark" 
-                        ? "bg-slate-800 border-slate-700 shadow-slate-900/50" 
-                        : "bg-gradient-to-b from-gray-50 to-gray-100 border-gray-200/80 shadow-gray-200/50"
-                    )}>
-                      <span className={classNames(
-                        "text-[10px] font-bold uppercase tracking-widest mr-2",
-                        theme === "dark" ? "text-rose-400 opacity-80" : "text-rose-600 opacity-90"
-                      )}>
-                        Admin
-                      </span>
-                      <Link to="/admin" className={classNames(
-                        "flex items-center gap-1.5 transition-colors font-bold text-sm",
-                        theme === "dark" ? "text-slate-200 hover:text-rose-400" : "text-slate-700 hover:text-rose-600"
-                      )}>
-                        Dashboard
-                      </Link>
-                      <div className={classNames("w-px h-4", theme === "dark" ? "bg-slate-600" : "bg-gray-300")}></div>
-                      <Link to="/admin/orders" className={classNames(
-                        "flex items-center gap-1.5 transition-colors font-bold text-sm",
-                        theme === "dark" ? "text-slate-200 hover:text-rose-400" : "text-slate-700 hover:text-rose-600"
-                      )}>
-                        Orders
-                      </Link>
-                      <div className={classNames("w-px h-4", theme === "dark" ? "bg-slate-600" : "bg-gray-300")}></div>
-                      <Link to="/admin/completed-orders" className={classNames(
-                        "flex items-center gap-1.5 transition-colors font-bold text-sm",
-                        theme === "dark" ? "text-slate-200 hover:text-rose-400" : "text-slate-700 hover:text-rose-600"
-                      )}>
-                        Completed
-                      </Link>
-                      <div className={classNames("w-px h-4", theme === "dark" ? "bg-slate-600" : "bg-gray-300")}></div>
-                      <Link to="/admin/products" className={classNames(
-                        "flex items-center gap-1.5 transition-colors font-bold text-sm",
-                        theme === "dark" ? "text-slate-200 hover:text-rose-400" : "text-slate-700 hover:text-rose-600"
-                      )}>
-                        Products
-                      </Link>
-                      <div className={classNames("w-px h-4", theme === "dark" ? "bg-slate-600" : "bg-gray-300")}></div>
-                      <Link to="/admin/users" className={classNames(
-                        "flex items-center gap-1.5 transition-colors font-bold text-sm",
-                        theme === "dark" ? "text-slate-200 hover:text-rose-400" : "text-slate-700 hover:text-rose-600"
-                      )}>
-                        Users
-                      </Link>
-                      <div className={classNames("w-px h-4", theme === "dark" ? "bg-slate-600" : "bg-gray-300")}></div>
-                      <Link to="/admin/banner" className={classNames(
-                        "flex items-center gap-1.5 transition-colors font-bold text-sm",
-                        theme === "dark" ? "text-slate-200 hover:text-rose-400" : "text-slate-700 hover:text-rose-600"
-                      )}>
-                        Banners
-                      </Link>
-                      <Link to="/admin/products" className="ml-2 bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white rounded-full px-3 py-1 transition-all transform hover:scale-105 shadow-md flex items-center gap-1.5 font-bold text-sm border border-rose-400/30">
-                        <FaPlus className="text-xs" /> Add
-                      </Link>
-                    </div>
-
-                    {/* LG Condensed Admin Dropdown */}
-                    <Link to="/admin" className={classNames(
-                        "hidden lg:flex xl:hidden items-center gap-2 px-4 py-1.5 rounded-full border font-bold text-sm transition-all",
-                        theme === "dark" 
-                          ? "bg-slate-800 border-slate-700 text-rose-400 hover:bg-slate-700" 
-                          : "bg-rose-50 border-rose-100 text-rose-600 hover:bg-rose-100 shadow-sm"
-                    )}>
-                        <FaChartBar className="text-xs" />
-                        <span>Admin Dashboard</span>
-                    </Link>
-                  </>
+                {/* Admin Link */}
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    className="ml-2 flex items-center gap-1.5 px-3 py-2 rounded-md font-bold text-[13px] bg-black text-white hover:bg-gray-800 transition-all shadow-sm"
+                  >
+                    <LayoutDashboard className="h-3.5 w-3.5" />
+                    Admin Panel
+                  </Link>
                 )}
               </div>
 
-              {/* Right Side Items */}
-              <div className="flex items-center gap-3 sm:gap-4">
-                {/* Admin Notifications */}
+              {/* ── Right Side ── */}
+              <div className="flex items-center gap-2">
+
+                {/* Admin Bell */}
                 {isAdmin && (
                   <div className="relative" ref={notificationRef}>
                     <button
                       type="button"
                       onClick={() => setShowNotifications(!showNotifications)}
-                      className={classNames(
-                        "p-2 rounded-full transition-all relative group",
-                        theme === "dark" ? "text-slate-300 hover:bg-slate-800" : "text-slate-600 hover:bg-rose-50"
-                      )}
+                      className="p-2 rounded-md transition-all relative group text-gray-500 hover:bg-gray-100 hover:text-black  :bg-gray-900 :text-white"
+                      aria-label="Notifications"
                     >
-                      <Bell className={classNames(
-                        "h-5 w-5 transition-colors",
-                        theme === "dark" ? "group-hover:text-rose-400" : "group-hover:text-rose-600"
-                      )} />
-                      {notifications.filter(n => !n.isRead).length > 0 && (
-                        <span className="absolute top-1.5 right-1.5 h-4 w-4 rounded-full bg-rose-500 ring-2 ring-white dark:ring-slate-900 text-[10px] font-bold text-white flex items-center justify-center">
-                          {notifications.filter(n => !n.isRead).length}
+                      <Bell className="h-5 w-5" />
+                      {notifications.filter((n) => !n.isRead).length > 0 && (
+                        <span className="absolute top-1 right-1 h-4 w-4 rounded-sm bg-black  ring-2 ring-white  text-[9px] font-black text-white  flex items-center justify-center">
+                          {notifications.filter((n) => !n.isRead).length}
                         </span>
                       )}
                     </button>
 
-                    {/* Dropdown */}
                     {showNotifications && (
-                      <div className={classNames(
-                        "absolute right-[-100px] sm:right-[-50px] lg:right-0 mt-3 w-[calc(100vw-2rem)] sm:w-80 origin-top-right rounded-3xl shadow-2xl ring-1 ring-black/5 focus:outline-none transition-all duration-300 z-[60] overflow-hidden",
-                        theme === "dark" ? "bg-slate-900/95 border border-slate-700/50 backdrop-blur-xl" : "bg-theme-cream-solid/95 border border-rose-100/50 backdrop-blur-xl"
-                      )}>
-                        <div className={classNames("p-4 py-3 border-b flex justify-between items-center", theme === "dark" ? "border-slate-800" : "border-gray-100")}>
-                          <h3 className={classNames("text-sm font-black italic", theme === "dark" ? "text-white" : "text-slate-900 uppercase tracking-widest")}>Admin Alerts</h3>
+                      <div className="absolute right-0 mt-2 w-80 origin-top-right rounded-lg shadow-xl ring-1 ring-black/10  z-[60] overflow-hidden bg-white  border border-gray-200 ">
+                        <div className="px-4 py-3 border-b border-gray-100  flex justify-between items-center">
+                          <h3 className="text-xs font-black uppercase tracking-widest text-black  flex items-center gap-1.5">
+                            <Bell className="h-3.5 w-3.5" />
+                            Alerts
+                          </h3>
                           <div className="flex items-center gap-3">
                             {notifications.length > 0 && (
-                              <button 
-                                onClick={handleClearAll}
-                                className="text-[10px] font-black text-rose-500 hover:text-rose-600 transition-colors uppercase tracking-tight"
-                              >
-                                Clear
+                              <button onClick={handleClearAll} className="text-[10px] font-black text-gray-400 hover:text-black :text-white transition-colors uppercase">
+                                Clear all
                               </button>
                             )}
-                            {notifications.some(n => !n.isRead) && (
-                              <button 
-                                onClick={handleMarkAllRead}
-                                className="text-[10px] font-black text-slate-500 hover:text-slate-600 dark:text-slate-400 Transition-colors uppercase tracking-tight"
-                              >
-                                Read
+                            {notifications.some((n) => !n.isRead) && (
+                              <button onClick={handleMarkAllRead} className="text-[10px] font-black text-gray-400 hover:text-black :text-white transition-colors uppercase">
+                                Mark read
                               </button>
                             )}
                           </div>
                         </div>
-                        <ul className={classNames("divide-y max-h-72 overflow-y-auto rounded-b-2xl custom-scrollbar", theme === "dark" ? "divide-slate-800" : "divide-gray-50")}>
+                        <ul className="divide-y divide-gray-100  max-h-72 overflow-y-auto">
                           {notifications.length === 0 ? (
-                            <li className={classNames("p-10 text-xs font-black uppercase tracking-widest text-center opacity-30 italic", theme === "dark" ? "text-slate-400" : "text-gray-500")}>Silence is golden...</li>
+                            <li className="p-8 text-xs font-black uppercase tracking-widest text-center opacity-30 italic text-gray-500">
+                              All caught up
+                            </li>
                           ) : (
-                            notifications.map(n => (
-                              <li key={n._id} className={classNames(
-                                  "p-4 text-sm cursor-pointer transition-colors border-l-2 group relative", 
-                                  n.isRead 
-                                      ? (theme === "dark" ? "text-slate-400 hover:bg-slate-800/50 border-transparent" : "text-gray-500 hover:bg-gray-50 border-transparent")
-                                      : (theme === "dark" ? "text-slate-100 bg-rose-500/5 hover:bg-rose-500/10 border-rose-500" : "text-gray-900 bg-rose-50 hover:bg-rose-100/50 border-rose-500")
-                              )}>
+                            notifications.map((n) => (
+                              <li
+                                key={n._id}
+                                className={classNames(
+                                  "px-4 py-3 text-sm cursor-pointer transition-colors border-l-2 group relative",
+                                  n.isRead
+                                    ? "text-gray-400 hover:bg-gray-50 :bg-gray-900 border-transparent"
+                                    : "text-gray-900  bg-gray-50  hover:bg-gray-100 :bg-gray-800 border-black ",
+                                )}
+                              >
                                 <div className="flex justify-between items-start gap-2">
                                   <div className="flex flex-col gap-0.5 min-w-0 flex-1">
                                     <span className="font-bold truncate text-[13px]">{n.message}</span>
-                                    <span className={classNames("text-[10px] font-black opacity-30 uppercase tracking-widest", theme === "dark" ? "text-slate-400" : "text-gray-500")}>
-                                        {new Date(n.createdAt).toLocaleTimeString()} · {new Date(n.createdAt).toLocaleDateString()}
+                                    <span className="text-[10px] font-black opacity-30 uppercase tracking-widest">
+                                      {new Date(n.createdAt).toLocaleTimeString()} · {new Date(n.createdAt).toLocaleDateString()}
                                     </span>
                                   </div>
-                                    <button 
-                                      onClick={(e) => handleDelete(e, n._id)}
-                                      className={classNames(
-                                        "p-1.5 rounded-lg lg:opacity-0 lg:group-hover:opacity-100 transition-opacity",
-                                        theme === "dark" ? "hover:bg-slate-700 text-slate-500" : "hover:bg-gray-200 text-gray-400"
-                                      )}
-                                    >
-                                    <Trash2 className="h-3.5 w-3.5" />
+                                  <button
+                                    onClick={(e) => handleDelete(e, n._id)}
+                                    className="p-1 rounded lg:opacity-0 lg:group-hover:opacity-100 transition-opacity hover:bg-gray-200 :bg-gray-700 text-gray-400"
+                                  >
+                                    <Trash2 className="h-3 w-3" />
                                   </button>
                                 </div>
                               </li>
@@ -296,442 +242,292 @@ export default function Navbar() {
                   </div>
                 )}
 
-                {/* Global Search Bar */}
-                <form 
+                {/* ── Desktop Search Bar ── */}
+                <form
                   onSubmit={(e) => {
                     e.preventDefault();
-                    const formData = new FormData(e.target);
-                    const query = formData.get("search");
-                    if (query) {
-                      navigate(`/?search=${encodeURIComponent(query)}`);
-                    } else {
-                      navigate(`/`); // Clear search on empty submit
-                    }
+                    const q = new FormData(e.target).get("search");
+                    navigate(q ? `/?search=${encodeURIComponent(q)}` : `/`);
                   }}
-                  className="hidden md:flex relative group items-center"
+                  className="hidden md:flex items-center relative group"
+                  role="search"
+                  aria-label="Search cakes"
                 >
-                  <div className={classNames(
-                    "absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors",
-                    theme === "dark" ? "text-slate-400 group-focus-within:text-rose-400" : "text-slate-400 group-focus-within:text-rose-500"
-                  )}>
-                    <FaSearch className="h-4 w-4" />
-                  </div>
+                  {/* Search icon on LEFT — non-interactive, theme-matched */}
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-focus-within:text-black transition-colors">
+                    <Search className="h-4 w-4" />
+                  </span>
                   <input
                     type="text"
                     name="search"
                     placeholder="Search cakes..."
-                    className={classNames(
-                      "block w-full pl-10 pr-3 py-1.5 border rounded-full text-sm font-medium transition-all duration-300 outline-none focus:ring-2 focus:ring-opacity-50",
-                      theme === "dark" 
-                        ? "bg-slate-800/50 border-slate-700 text-slate-200 placeholder-slate-500 focus:bg-slate-800 focus:border-rose-500/50 focus:ring-rose-500/30"
-                        : "bg-gray-100/50 border-gray-200 text-slate-800 placeholder-slate-500 focus:bg-theme-cream-solid focus:border-rose-300 focus:ring-rose-200"
-                    )}
+                    aria-label="Search"
+                    className="w-44 lg:w-52 pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm font-medium bg-white text-gray-800 placeholder-gray-400 outline-none focus:w-60 focus:border-black focus:ring-2 focus:ring-black/8 transition-all duration-300"
                   />
                 </form>
 
-                {/* Cart Icon Badge (Desktop) */}
-                {user && user.role !== 'admin' && (
-                  <Link 
-                    to="/cart" 
-                    className={classNames(
-                      "relative p-2 rounded-full transition-all group",
-                      theme === "dark" ? "text-slate-300 hover:bg-slate-800" : "text-slate-600 hover:bg-rose-50"
-                    )}
+                {/* Cart (Desktop) */}
+                {user && user.role !== "admin" && (
+                  <Link
+                    to="/cart"
+                    aria-label="Shopping Cart"
+                    className="relative flex items-center gap-1.5 px-3 py-2 rounded-md font-semibold text-sm transition-all hover:bg-gray-100"
                   >
-                    <FaShoppingCart className={classNames(
-                      "h-5 w-5 transition-colors",
-                      theme === "dark" ? "group-hover:text-rose-400" : "group-hover:text-rose-600"
-                    )} />
-                    {cartCount > 0 && (
-                      <span className="badge badge-corner h-5 w-5 text-[10px] bg-rose-500">
-                        {cartCount}
-                      </span>
-                    )}
+                    {/* Cart icon — black when empty, green when has items */}
+                    <span className="relative">
+                      <ShoppingCart className={`h-5 w-5 transition-colors ${cartCount > 0 ? "text-green-500" : "text-black"}`} />
+                      {cartCount > 0 && (
+                        <span className="absolute -top-2 -right-2 min-w-[18px] h-[18px] flex items-center justify-center bg-green-500 text-white text-[10px] font-black rounded-full px-1 shadow-sm ring-2 ring-white">
+                          {cartCount}
+                        </span>
+                      )}
+                    </span>
+                    <span className={`hidden sm:inline font-bold transition-colors ${cartCount > 0 ? "text-green-600" : "text-black"}`}>
+                      Cart
+                    </span>
                   </Link>
                 )}
-
-                {/* Theme Toggle (Desktop Only) */}
-                <div className="hidden md:block">
-                  <ThemeToggle />
-                </div>
 
                 {/* Mobile Search Icon */}
                 <button
                   type="button"
                   onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
-                  className={classNames(
-                    "md:hidden p-2 rounded-full transition-all group",
-                    theme === "dark" ? "text-slate-300 hover:bg-slate-800" : "text-slate-600 hover:bg-rose-50"
-                  )}
+                  className="md:hidden p-2 rounded-md transition-all text-gray-500 hover:bg-gray-100 hover:text-black  :bg-gray-900 :text-white"
+                  aria-label="Open search"
                 >
-                  <FaSearch className={classNames(
-                    "h-5 w-5 transition-colors",
-                    theme === "dark" ? "group-hover:text-rose-400" : "group-hover:text-rose-600"
-                  )} />
+                  <Search className="h-5 w-5" />
                 </button>
 
-                {/* Auth Links - Simplified to only burger menu on small screens */}
+                {/* Auth Buttons */}
                 {!loading && (
-                  <div className="hidden sm:flex items-center">
+                  <div className="hidden sm:flex items-center gap-2">
                     {!user ? (
-                      <div className="flex gap-2">
+                      <>
                         <Link
                           to="/login"
-                          className={classNames(
-                            "px-4 py-2 rounded-full font-semibold transition-all text-sm",
-                            theme === "dark" 
-                              ? "bg-slate-800 text-white hover:bg-slate-700" 
-                              : "bg-theme-cream-solid text-rose-600 border border-rose-200 hover:bg-rose-50"
-                          )}
+                          id="navbar-login-btn"
+                          className="flex items-center gap-1.5 px-3 py-2 rounded-md font-semibold text-sm border border-gray-300  text-gray-700  bg-white  hover:bg-gray-50 :bg-gray-900 hover:border-black :border-white transition-all"
                         >
+                          <LogIn className="h-3.5 w-3.5" />
                           Login
                         </Link>
                         <Link
                           to="/signup"
-                          className="hidden lg:block px-4 py-2 rounded-full bg-gradient-to-r from-rose-500 to-pink-500 text-white hover:from-rose-600 hover:to-pink-600 font-semibold shadow-md transition-all text-sm"
+                          id="navbar-signup-btn"
+                          className="flex items-center gap-1.5 px-3 py-2 rounded-md font-semibold text-sm bg-black  text-white  hover:bg-gray-800 :bg-gray-200 transition-all shadow-sm"
                         >
+                          <UserPlus className="h-3.5 w-3.5" />
                           Sign Up
                         </Link>
-                      </div>
+                      </>
                     ) : (
                       <button
                         onClick={logout}
-                        className={classNames(
-                          "flex items-center gap-2 px-4 py-2 rounded-full font-semibold transition-all shadow-sm",
-                          theme === "dark"
-                            ? "bg-slate-800 hover:bg-rose-900/50 text-slate-200 hover:text-rose-200 border border-slate-700"
-                            : "bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200"
-                        )}
+                        id="navbar-signout-btn"
+                        className="flex items-center gap-1.5 px-3 py-2 rounded-md font-semibold text-sm border border-gray-300  text-gray-700  bg-white  hover:bg-gray-50 :bg-gray-900 transition-all"
                       >
-                        <span className="hidden xl:inline text-xs">
-                          {user.name.split(' ')[0].toUpperCase()}
-                        </span>
-                        <FaSignOutAlt className={theme === "dark" ? "text-rose-400" : "text-rose-500"} />
+                        <LogOut className="h-3.5 w-3.5" />
+                        Sign Out
                       </button>
                     )}
                   </div>
                 )}
 
-                {/* Mobile Menu Button */}
-                <DisclosureButton className={classNames(
-                  "lg:hidden inline-flex items-center justify-center rounded-xl p-2.5 transition-all active:scale-95 border",
-                  theme === "dark" 
-                    ? "text-slate-300 bg-slate-800 border-slate-700" 
-                    : "text-rose-600 bg-rose-50 border-rose-100 hover:bg-rose-100 shadow-sm"
-                )}>
-                  <span className="sr-only">Toggle menu</span>
-                  <Bars3Icon
-                    aria-hidden="true"
-                    className="block h-6 w-6 group-data-open:hidden"
-                  />
-                  <XMarkIcon
-                    aria-hidden="true"
-                    className="hidden h-6 w-6 group-data-open:block"
-                  />
+                {/* Mobile Burger */}
+                <DisclosureButton
+                  className="lg:hidden inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-md border border-gray-300  font-bold text-sm text-gray-700  bg-white  hover:bg-gray-100 :bg-gray-900 transition-all"
+                  aria-label="Open navigation menu"
+                >
+                  <MenuIcon className="h-4 w-4" />
+                  <span className="hidden xs:inline">Menu</span>
                 </DisclosureButton>
               </div>
             </div>
           </div>
 
-          {/* Mobile Overlay Search Bar */}
+          {/* ── Mobile Overlay Search (RECTANGLE) ── */}
           {isMobileSearchOpen && (
-            <div className={classNames(
-              "md:hidden absolute top-16 left-0 w-full p-4 border-b z-40 shadow-lg",
-              theme === "dark" ? "bg-slate-900 border-slate-800" : "bg-theme-cream-solid border-rose-100"
-            )}>
-              <form 
+            <div className="md:hidden absolute top-16 left-0 w-full px-4 py-3 border-b border-gray-200  bg-white  z-40 shadow-lg">
+              <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  const formData = new FormData(e.target);
-                  const query = formData.get("search");
-                  if (query) {
-                    navigate(`/?search=${encodeURIComponent(query)}`);
-                    setIsMobileSearchOpen(false);
-                  } else {
-                    navigate(`/`);
-                  }
+                  const q = new FormData(e.target).get("search");
+                  navigate(q ? `/?search=${encodeURIComponent(q)}` : `/`);
+                  setIsMobileSearchOpen(false);
                 }}
                 className="relative flex items-center"
+                role="search"
+                aria-label="Mobile search"
               >
-                <div className={classNames(
-                  "absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors",
-                  theme === "dark" ? "text-slate-400" : "text-slate-400"
-                )}>
-                  <FaSearch className="h-4 w-4" />
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                  <Search className="h-4 w-4" />
                 </div>
                 <input
                   type="text"
                   name="search"
                   autoFocus
-                  placeholder="Search cakes..."
-                  className={classNames(
-                    "block w-full pl-10 pr-10 py-2 border rounded-full text-sm font-medium transition-all duration-300 outline-none focus:ring-2 focus:ring-opacity-50",
-                    theme === "dark" 
-                      ? "bg-slate-800/50 border-slate-700 text-slate-200 placeholder-slate-500 focus:bg-slate-800 focus:border-rose-500/50 focus:ring-rose-500/30"
-                      : "bg-gray-100/50 border-gray-200 text-slate-800 placeholder-slate-500 focus:bg-theme-cream-solid focus:border-rose-300 focus:ring-rose-200"
-                  )}
+                  placeholder="Search cakes, pastries..."
+                  aria-label="Search"
+                  className="block w-full pl-10 pr-10 py-2.5 border border-gray-300  rounded-lg text-sm font-medium bg-gray-50  text-gray-900  placeholder-gray-400  outline-none focus:bg-white :bg-black focus:border-black :border-white transition-all"
                 />
-                <button 
+                <button
                   type="button"
                   onClick={() => setIsMobileSearchOpen(false)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-rose-500"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-black :text-white"
+                  aria-label="Close search"
                 >
-                  <XMarkIcon className="h-5 w-5" />
+                  <X className="h-4 w-4" />
                 </button>
               </form>
             </div>
           )}
 
-          {/* Mobile Menu */}
-          <DisclosurePanel className="lg:hidden border-b border-rose-100 dark:border-slate-800 bg-theme-cream-solid dark:bg-slate-900 shadow-xl relative z-40">
-            <div className={classNames(
-              "space-y-1 px-4 pt-4 pb-8",
-              theme === "dark" ? "bg-slate-900" : "bg-theme-cream-solid"
-            )}>
-              {/* Mobile Global Search - Full Width */}
-              <form 
+          {/* ── Mobile Menu Panel ── */}
+          <DisclosurePanel className="lg:hidden border-b border-gray-200  bg-white  shadow-xl relative z-40">
+            <div className="px-4 pt-4 pb-8 space-y-1 bg-white ">
+
+              {/* Mobile Search */}
+              <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  const formData = new FormData(e.target);
-                  const query = formData.get("search");
-                  if (query) {
-                    navigate(`/?search=${encodeURIComponent(query)}`);
-                  } else {
-                    navigate(`/`);
-                  }
+                  const q = new FormData(e.target).get("search");
+                  navigate(q ? `/?search=${encodeURIComponent(q)}` : `/`);
                   close();
                 }}
-                className="relative group items-center mb-6"
+                className="relative mb-5"
+                role="search"
+                aria-label="Mobile menu search"
               >
-                <div className={classNames(
-                  "absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors",
-                  theme === "dark" ? "text-slate-400 group-focus-within:text-rose-400" : "text-slate-400 group-focus-within:text-rose-500"
-                )}>
-                  <FaSearch className="h-4 w-4" />
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                  <Search className="h-4 w-4" />
                 </div>
                 <input
                   type="text"
                   name="search"
                   placeholder="Search for cakes, pastries..."
-                  className={classNames(
-                    "block w-full pl-11 pr-4 py-3.5 border rounded-2xl text-base font-bold transition-all duration-300 outline-none focus:ring-4 focus:ring-opacity-20",
-                    theme === "dark" 
-                      ? "bg-slate-800 border-slate-700 text-slate-200 placeholder-slate-500 focus:bg-slate-800/80 focus:border-rose-500/50 focus:ring-rose-500/30"
-                      : "bg-gray-50 border-gray-200 text-slate-800 placeholder-slate-500 focus:bg-theme-cream-solid focus:border-rose-300 focus:ring-rose-500/20"
-                  )}
+                  aria-label="Search"
+                  className="block w-full pl-10 pr-4 py-3 border border-gray-300  rounded-lg text-sm font-bold bg-gray-50  text-gray-900  placeholder-gray-400  outline-none focus:bg-white :bg-black focus:border-black :border-white transition-all"
                 />
               </form>
 
-              {/* Add User Profile Info in Mobile Menu if Logged in */}
+              {/* User Profile Card */}
               {user && (
-                <div className={classNames(
-                  "flex items-center gap-3 px-4 py-4 rounded-2xl mb-4 border border-dashed",
-                  theme === "dark" ? "bg-slate-800/40 border-slate-700" : "bg-rose-50/50 border-rose-200"
-                )}>
-                  <div className="h-10 w-10 rounded-full bg-rose-500 flex items-center justify-center text-white font-black text-sm shadow-md">
+                <div className="flex items-center gap-3 px-3 py-3 rounded-lg mb-3 border border-gray-200  bg-gray-50 ">
+                  <div className="h-9 w-9 rounded-md bg-black  flex items-center justify-center text-white  font-black text-sm">
                     {user.name[0].toUpperCase()}
                   </div>
                   <div className="flex flex-col">
-                    <span className={classNames("text-sm font-bold", theme === "dark" ? "text-white" : "text-slate-900")}>{user.name}</span>
-                    <span className={classNames("text-[10px] font-black uppercase tracking-widest opacity-40", theme === "dark" ? "text-slate-400" : "text-rose-600")}>{user.role} Account</span>
+                    <span className="text-sm font-black text-black ">{user.name}</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{user.role} Account</span>
                   </div>
                 </div>
               )}
 
-              {navigationItems.map((item) => (
-                <DisclosureButton
-                  key={item.href}
-                  as={Link}
-                  to={item.href}
-                  className={classNames(
-                    "block rounded-xl px-5 py-4 text-base font-bold transition-all w-full text-left mb-2",
-                    theme === "dark" 
-                      ? "text-slate-300 hover:bg-slate-800 hover:text-rose-400" 
-                      : "text-slate-700 hover:bg-rose-50 hover:text-rose-600"
-                  )}
-                >
-                  {item.name}
-                </DisclosureButton>
-              ))}
+              {/* Nav Items */}
+              {navigationItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <DisclosureButton
+                    key={item.href}
+                    as={Link}
+                    to={item.href}
+                    className="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-bold transition-all w-full text-left text-gray-700  hover:bg-gray-100 :bg-gray-900 hover:text-black :text-white"
+                  >
+                    <Icon className="h-4 w-4 text-gray-400" />
+                    {item.name}
+                  </DisclosureButton>
+                );
+              })}
 
-              {/* Mobile Cart Link with Badge */}
-              {user && user.role !== 'admin' && (
+              {/* Cart Mobile */}
+              {user && user.role !== "admin" && (
                 <DisclosureButton
                   as={Link}
                   to="/cart"
-                  className={classNames(
-                    "flex items-center justify-between rounded-xl px-5 py-4 text-base font-bold transition-all w-full text-left mb-2 border border-transparent",
-                    theme === "dark" 
-                      ? "text-slate-300 hover:bg-slate-800 hover:text-rose-400" 
-                      : "text-slate-700 hover:bg-rose-50 hover:text-rose-600"
-                  )}
+                  className="flex items-center justify-between rounded-lg px-4 py-3 text-sm font-bold transition-all w-full text-gray-700  hover:bg-gray-100 :bg-gray-900 hover:text-black :text-white"
                 >
                   <div className="flex items-center gap-3">
-                    <FaShoppingCart className={theme === "dark" ? "text-rose-400" : "text-rose-500"} />
+                    <ShoppingCart className="h-4 w-4 text-gray-400" />
                     <span>My Shopping Cart</span>
                   </div>
                   {cartCount > 0 && (
-                    <span className="bg-rose-500 text-white font-black text-[11px] px-3 py-1 rounded-full shadow-sm">
-                      {cartCount} {cartCount === 1 ? 'Item' : 'Items'}
+                    <span className="bg-black  text-white  font-black text-[11px] px-2.5 py-0.5 rounded-sm">
+                      {cartCount} {cartCount === 1 ? "item" : "items"}
                     </span>
                   )}
                 </DisclosureButton>
               )}
 
-              {/* Mobile Theme Toggle in Menu */}
-              <div className={classNames(
-                "flex items-center justify-between rounded-xl px-5 py-4 text-base font-bold transition-all w-full text-left mb-2",
-                theme === "dark" ? "text-slate-300" : "text-slate-700"
-              )}>
-                 <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800">
-                      {theme === 'dark' ? '🌙' : '☀️'}
-                    </div>
-                    <span>Appearance</span>
-                 </div>
-                 <ThemeToggle />
-              </div>
-
-              {/* Mobile Admin Menu Items */}
+              {/* Admin Section */}
               {isAdmin && (
-                <div className="pt-6 pb-2 mt-6 border-t border-gray-200 dark:border-slate-800/50 space-y-2">
-                  <div className="px-4 flex items-center justify-between mb-4">
-                     <span className="text-[10px] font-black text-rose-500 uppercase tracking-[4px] opacity-60">Admin Dashboard</span>
-                     <div className="h-px flex-1 bg-rose-100 dark:bg-slate-800 ml-4"></div>
+                <div className="pt-4 mt-3 border-t border-gray-100  space-y-1">
+                  <div className="flex items-center gap-2 px-2 mb-3">
+                    <BarChart2 className="h-3 w-3 text-gray-400" />
+                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-[3px]">Admin</span>
+                    <div className="flex-1 h-px bg-gray-200 " />
                   </div>
-                  
-                  <DisclosureButton
-                    as={Link}
-                    to="/admin"
-                    className={classNames(
-                      "flex items-center gap-4 rounded-2xl px-5 py-3.5 text-base font-bold w-full transition-all",
-                      theme === "dark" ? "text-slate-300 hover:bg-slate-800" : "text-slate-700 bg-gray-50 hover:bg-rose-50 hover:text-rose-600"
-                    )}
-                  >
-                    <FaChartBar className={theme === "dark" ? "text-rose-400" : "text-slate-400"} /> 
-                    <div className="flex flex-col">
-                       <span className="text-[14px]">Overview Dashboard</span>
-                       <span className="text-[10px] opacity-40 uppercase tracking-widest font-black">Statistics & Analytics</span>
-                    </div>
-                  </DisclosureButton>
-                  
-                  <DisclosureButton
-                    as={Link}
-                    to="/admin/orders"
-                    className={classNames(
-                      "flex items-center gap-4 rounded-2xl px-5 py-3.5 text-base font-bold w-full transition-all",
-                      theme === "dark" ? "text-slate-300 hover:bg-slate-800" : "text-slate-700 bg-gray-50 hover:bg-rose-50 hover:text-rose-600"
-                    )}
-                  >
-                    <FaBoxOpen className={theme === "dark" ? "text-rose-400" : "text-slate-400"} /> 
-                    <div className="flex flex-col">
-                       <span className="text-[14px]">Order Fulfillment</span>
-                       <span className="text-[10px] opacity-40 uppercase tracking-widest font-black">Manage Customer Orders</span>
-                    </div>
-                  </DisclosureButton>
 
-                  <DisclosureButton
-                    as={Link}
-                    to="/admin/completed-orders"
-                    className={classNames(
-                      "flex items-center gap-4 rounded-2xl px-5 py-3.5 text-base font-bold w-full transition-all",
-                      theme === "dark" ? "text-slate-300 hover:bg-slate-800" : "text-slate-700 bg-gray-50 hover:bg-rose-50 hover:text-rose-600"
-                    )}
-                  >
-                    <FaCheckCircle className={theme === "dark" ? "text-rose-400" : "text-slate-400"} /> 
-                    <div className="flex flex-col">
-                       <span className="text-[14px]">Completed Orders</span>
-                       <span className="text-[10px] opacity-40 uppercase tracking-widest font-black">Fulfillment History</span>
-                    </div>
-                  </DisclosureButton>
-                  
+                  {adminMobileLinks.map((adminItem) => {
+                    const Icon = adminItem.icon;
+                    return (
+                      <DisclosureButton
+                        key={adminItem.to}
+                        as={Link}
+                        to={adminItem.to}
+                        className="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-bold w-full transition-all text-gray-700  bg-gray-50  hover:bg-gray-100 :bg-gray-800 hover:text-black :text-white"
+                      >
+                        <Icon className="h-4 w-4 text-gray-400 shrink-0" />
+                        <div className="flex flex-col">
+                          <span>{adminItem.label}</span>
+                          <span className="text-[10px] opacity-40 uppercase tracking-widest font-black">{adminItem.sub}</span>
+                        </div>
+                      </DisclosureButton>
+                    );
+                  })}
+
                   <DisclosureButton
                     as={Link}
                     to="/admin/products"
-                    className={classNames(
-                      "flex items-center gap-4 rounded-2xl px-5 py-3.5 text-base font-bold w-full transition-all",
-                      theme === "dark" ? "text-slate-300 hover:bg-slate-800" : "text-slate-700 bg-gray-50 hover:bg-rose-50 hover:text-rose-600"
-                    )}
+                    className="flex items-center justify-center gap-2 rounded-lg px-4 py-3.5 text-sm font-black w-full bg-black  text-white  hover:bg-gray-800 :bg-gray-100 shadow-md mt-3 transition-all active:scale-95"
                   >
-                    <FaTags className={theme === "dark" ? "text-rose-400" : "text-slate-400"} /> 
-                    <div className="flex flex-col">
-                       <span className="text-[14px]">Catalog Management</span>
-                       <span className="text-[10px] opacity-40 uppercase tracking-widest font-black">Inventory & Pricing</span>
-                    </div>
-                  </DisclosureButton>
-
-                  <DisclosureButton
-                    as={Link}
-                    to="/admin/users"
-                    className={classNames(
-                      "flex items-center gap-4 rounded-2xl px-5 py-3.5 text-base font-bold w-full transition-all",
-                      theme === "dark" ? "text-slate-300 hover:bg-slate-800" : "text-slate-700 bg-gray-50 hover:bg-rose-50 hover:text-rose-600"
-                    )}
-                  >
-                    <FaUsers className={theme === "dark" ? "text-rose-400" : "text-slate-400"} /> 
-                    <div className="flex flex-col">
-                       <span className="text-[14px]">Customer Directory</span>
-                       <span className="text-[10px] opacity-40 uppercase tracking-widest font-black">User Accounts</span>
-                    </div>
-                  </DisclosureButton>
-
-                  <DisclosureButton
-                    as={Link}
-                    to="/admin/banner"
-                    className={classNames(
-                      "flex items-center gap-4 rounded-2xl px-5 py-3.5 text-base font-bold w-full transition-all",
-                      theme === "dark" ? "text-slate-300 hover:bg-slate-800" : "text-slate-700 bg-gray-50 hover:bg-rose-50 hover:text-rose-600"
-                    )}
-                  >
-                    <FaImage className={theme === "dark" ? "text-rose-400" : "text-slate-400"} /> 
-                    <div className="flex flex-col">
-                       <span className="text-[14px]">Marketing Banners</span>
-                       <span className="text-[10px] opacity-40 uppercase tracking-widest font-black">Promotional Display</span>
-                    </div>
-                  </DisclosureButton>
-                  
-                  <DisclosureButton
-                    as={Link}
-                    to="/admin/products"
-                    className="flex items-center justify-center gap-3 rounded-2xl px-4 py-4 text-base font-black w-full bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white shadow-xl mt-6 transition-all active:scale-95"
-                  >
-                    <FaPlus /> <span>New Product Entry</span>
+                    <Plus className="h-4 w-4" />
+                    New Product Entry
                   </DisclosureButton>
                 </div>
               )}
 
+              {/* Auth Actions */}
               {user ? (
-                <div className="pt-8 border-t mt-8 border-gray-100 dark:border-slate-800">
+                <div className="pt-4 border-t mt-3 border-gray-100 ">
                   <DisclosureButton
                     as="button"
-                    onClick={() => {
-                       logout();
-                       close();
-                    }}
-                    className="flex items-center justify-center gap-3 w-full rounded-2xl px-4 py-4 text-base font-black text-rose-600 bg-rose-50 border border-rose-100 hover:bg-rose-100 dark:bg-rose-900/20 dark:border-rose-900/40 dark:hover:bg-rose-900/40 dark:text-rose-400 transition-all shadow-md active:scale-95"
+                    onClick={() => { logout(); close(); }}
+                    className="flex items-center justify-center gap-2 w-full rounded-lg px-4 py-3.5 text-sm font-black border border-gray-300  text-gray-700  bg-white  hover:bg-gray-100 :bg-gray-900 transition-all active:scale-95"
                   >
-                    <FaSignOutAlt /> Sign Out
+                    <LogOut className="h-4 w-4" />
+                    Sign Out
                   </DisclosureButton>
                 </div>
               ) : (
-                <div className="pt-8 border-t mt-8 border-gray-100 dark:border-slate-800 space-y-3">
-                    <DisclosureButton
-                        as={Link}
-                        to="/login"
-                        className="flex items-center justify-center w-full rounded-2xl px-4 py-4 text-base font-black text-white bg-rose-500 shadow-lg active:scale-95 transition-all"
-                    >
-                        Sign In
-                    </DisclosureButton>
-                    <DisclosureButton
-                        as={Link}
-                        to="/signup"
-                        className={classNames(
-                            "flex items-center justify-center w-full rounded-2xl px-4 py-4 text-base font-black border transition-all",
-                            theme === "dark" ? "border-slate-700 text-slate-300" : "border-gray-200 text-slate-600 bg-gray-50"
-                        )}
-                    >
-                        Create Account
-                    </DisclosureButton>
+                <div className="pt-4 border-t mt-3 border-gray-100  space-y-2">
+                  <DisclosureButton
+                    as={Link}
+                    to="/login"
+                    id="mobile-login-btn"
+                    className="flex items-center justify-center gap-2 w-full rounded-lg px-4 py-3.5 text-sm font-black border border-gray-300  text-gray-800  bg-white  hover:bg-gray-100 :bg-gray-900 transition-all active:scale-95"
+                  >
+                    <LogIn className="h-4 w-4" />
+                    Sign In
+                  </DisclosureButton>
+                  <DisclosureButton
+                    as={Link}
+                    to="/signup"
+                    id="mobile-signup-btn"
+                    className="flex items-center justify-center gap-2 w-full rounded-lg px-4 py-3.5 text-sm font-black bg-black  text-white  hover:bg-gray-800 :bg-gray-200 shadow-md transition-all active:scale-95"
+                  >
+                    <UserPlus className="h-4 w-4" />
+                    Create Account
+                  </DisclosureButton>
                 </div>
               )}
             </div>

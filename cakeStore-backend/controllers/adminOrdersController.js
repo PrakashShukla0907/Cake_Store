@@ -53,6 +53,9 @@ export const updateOrderStatus = async (req, res) => {
     }
 
     order.orderStatus = status;
+    if (status === "Cancelled") {
+      order.cancelledBy = "Admin";
+    }
     await order.save();
 
     res.json({

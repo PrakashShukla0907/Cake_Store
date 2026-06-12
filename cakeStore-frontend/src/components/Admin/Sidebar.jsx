@@ -1,17 +1,11 @@
 import { Link, useLocation } from "react-router-dom";
-import { useTheme } from "../../context/ThemeContext";
-import { LayoutDashboard, ShoppingBag, Package, Users, LogOut, Image as ImageIcon, X, CheckCircle } from "lucide-react";
+import { LayoutDashboard, ShoppingBag, Package, Users, LogOut, Image as ImageIcon, X, CheckCircle, XCircle } from "lucide-react";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { logoutUser } from "../../api/auth.api";
 import { useAdmin } from "../../context/AdminContext";
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
-
 export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }) {
-  const { theme } = useTheme();
   const location = useLocation();
   const { user } = useContext(AuthContext);
   const { pendingOrdersCount } = useAdmin();
@@ -33,30 +27,20 @@ export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }) {
     { name: "Products", href: "/admin/products", icon: ShoppingBag },
     { name: "Orders", href: "/admin/orders", icon: Package },
     { name: "Completed", href: "/admin/completed-orders", icon: CheckCircle },
+    { name: "Cancelled", href: "/admin/cancelled-orders", icon: XCircle },
     { name: "Users", href: "/admin/users", icon: Users },
   ];
 
   const sidebarContent = (
-    <div className={classNames(
-      "flex h-full flex-col overflow-y-auto border-r transition-colors duration-300",
-      theme === "dark" 
-        ? "bg-theme-dark-bg border-theme-dark-border" 
-        : "bg-theme-light-bg border-theme-light-border"
-    )}>
+    <div className="flex h-full flex-col overflow-y-auto border-r border-gray-200 bg-white">
       {/* Brand */}
-      <div className={classNames(
-        "flex h-16 shrink-0 items-center justify-between px-6 border-b",
-        theme === "dark" ? "border-theme-dark-border" : "border-theme-light-border"
-      )}>
-        <Link to="/" className={classNames(
-          "text-xl font-bold tracking-tight",
-          theme === "dark" ? "text-theme-dark-text" : "text-theme-light-text"
-        )}>
-          BakeEase Admin
+      <div className="flex h-16 shrink-0 items-center justify-between px-6 border-b border-gray-200">
+        <Link to="/" className="text-xl font-black tracking-tight text-black">
+          Gopal Bakers Admin
         </Link>
         <button
           type="button"
-          className="lg:hidden -mr-2 p-2 rounded-md text-gray-500 hover:bg-gray-100 focus:outline-none"
+          className="lg:hidden -mr-2 p-2 rounded-md text-gray-500 hover:bg-gray-100 hover:text-black focus:outline-none"
           onClick={() => setMobileMenuOpen(false)}
         >
           <X className="h-6 w-6" aria-hidden="true" />
@@ -75,29 +59,21 @@ export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }) {
               key={item.name}
               to={item.href}
               onClick={() => setMobileMenuOpen(false)}
-              className={classNames(
-                "group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300",
+              className={`group flex items-center px-4 py-3 text-sm font-bold rounded-md transition-all ${
                 isActive 
-                  ? (theme === "dark" 
-                      ? "bg-theme-dark-primary text-theme-dark-bg shadow-sm" 
-                      : "bg-theme-light-primary text-theme-light-text shadow-sm")
-                  : (theme === "dark" 
-                      ? "text-theme-dark-muted hover:bg-theme-dark-card hover:text-theme-dark-text" 
-                      : "text-theme-light-muted hover:bg-theme-light-card hover:text-theme-light-text")
-              )}
+                  ? "bg-black text-white" 
+                  : "text-gray-500 hover:bg-gray-100 hover:text-black"
+              }`}
             >
               <item.icon
-                className={classNames(
-                  "mr-3 flex-shrink-0 h-5 w-5 transition-transform group-hover:scale-110",
-                  isActive 
-                    ? (theme === "dark" ? "text-theme-dark-bg" : "text-theme-light-text") 
-                    : (theme === "dark" ? "text-theme-dark-muted group-hover:text-theme-dark-text" : "text-theme-light-muted group-hover:text-theme-light-text")
-                )}
+                className={`mr-3 flex-shrink-0 h-5 w-5 transition-transform group-hover:scale-110 ${
+                  isActive ? "text-white" : "text-gray-400 group-hover:text-black"
+                }`}
                 aria-hidden="true"
               />
               {item.name}
               {item.name === "Orders" && pendingOrdersCount > 0 && (
-                <span className="ml-auto flex h-2 w-2 rounded-full bg-rose-500 ring-2 ring-white dark:ring-slate-900 group-hover:scale-125 transition-transform" />
+                <span className="ml-auto flex h-2 w-2 rounded-full bg-black ring-2 ring-white" />
               )}
             </Link>
           );
@@ -105,25 +81,17 @@ export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }) {
       </nav>
 
       {/* Bottom section */}
-      <div className={classNames(
-        "p-4 border-t mt-auto space-y-4",
-        theme === "dark" ? "border-theme-dark-border bg-slate-900/50" : "border-theme-light-border bg-gray-50/50"
-      )}>
+      <div className="p-4 border-t border-gray-200 bg-gray-50 mt-auto space-y-4">
         {/* User Profile Summary */}
         <div className="flex items-center gap-3 px-2 py-1">
-          <div className={classNames(
-            "h-9 w-9 rounded-full flex items-center justify-center text-xs font-black ring-2 ring-offset-2",
-            theme === "dark" 
-              ? "bg-rose-500 text-white ring-slate-900 ring-rose-500/20" 
-              : "bg-rose-600 text-white ring-white ring-rose-500/10"
-          )}>
+          <div className="h-9 w-9 rounded-md flex items-center justify-center text-xs font-black bg-black text-white">
             {user?.name?.substring(0, 2).toUpperCase() || "AD"}
           </div>
           <div className="flex flex-col min-w-0">
-            <p className={classNames("text-sm font-bold truncate", theme === "dark" ? "text-white" : "text-slate-900")}>
+            <p className="text-sm font-bold truncate text-black">
               {user?.name || "Administrator"}
             </p>
-            <p className={classNames("text-[10px] font-black uppercase tracking-widest opacity-60 truncate", theme === "dark" ? "text-rose-400" : "text-rose-600")}>
+            <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 truncate">
               {user?.role || "Admin"}
             </p>
           </div>
@@ -131,14 +99,9 @@ export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }) {
 
         <button
           onClick={handleLogout}
-          className={classNames(
-            "group flex w-full items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300",
-            theme === "dark"
-              ? "text-red-400 hover:bg-rose-500/10 hover:text-rose-400"
-              : "text-red-600 hover:bg-red-50 hover:text-red-700 shadow-sm hover:shadow-red-500/5"
-          )}
+          className="group flex w-full items-center px-4 py-3 text-sm font-bold rounded-md transition-all text-gray-600 hover:bg-gray-200 hover:text-black"
         >
-          <LogOut className="mr-3 h-5 w-5 transition-transform group-hover:-translate-x-1" />
+          <LogOut className="mr-3 h-5 w-5 text-gray-400 group-hover:text-black transition-transform group-hover:-translate-x-1" />
           Logout
         </button>
       </div>
@@ -156,7 +119,7 @@ export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }) {
       {mobileMenuOpen && (
         <div className="relative z-[100] lg:hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
           <div 
-            className="fixed inset-0 bg-gray-900/80 backdrop-blur-sm transition-opacity" 
+            className="fixed inset-0 bg-black/60 transition-opacity" 
             onClick={() => setMobileMenuOpen(false)}
           />
           <div className="fixed inset-0 flex justify-start">
@@ -169,5 +132,3 @@ export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }) {
     </>
   );
 }
-
-

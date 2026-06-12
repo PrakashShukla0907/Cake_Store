@@ -5,36 +5,20 @@ function classNames(...classes) {
 }
 
 export default function StatsCard({ title, value, icon: Icon, trend, trendValue }) {
-  const { theme } = useTheme();
-
   return (
-    <div className={classNames(
-      "overflow-hidden rounded-2xl p-6 shadow-sm border transition-all duration-500 hover:shadow-lg hover:-translate-y-1 hover:scale-[1.02] group",
-      theme === "dark" 
-        ? "bg-theme-dark-card border-theme-dark-border hover:shadow-rose-500/10 hover:border-rose-500/30" 
-        : "bg-theme-light-card border-theme-light-border hover:shadow-rose-500/20 hover:border-rose-500/40"
-    )}>
+    <div className="overflow-hidden rounded-md p-6 bg-white shadow-sm border border-gray-200 transition-all hover:shadow-md">
       <div className="flex items-center justify-between">
         <div>
-          <p className={classNames(
-            "text-sm font-medium",
-            theme === "dark" ? "text-theme-dark-muted" : "text-theme-light-muted"
-          )}>
+          <p className="text-sm font-medium text-gray-500">
             {title}
           </p>
-          <p className={classNames(
-            "mt-2 text-3xl font-bold tracking-tight",
-            theme === "dark" ? "text-theme-dark-text" : "text-theme-light-text"
-          )}>
+          <p className="mt-2 text-3xl font-black tracking-tight text-black">
             {value}
           </p>
         </div>
         
         {Icon && (
-          <div className={classNames(
-            "flex h-12 w-12 items-center justify-center rounded-xl",
-            theme === "dark" ? "bg-theme-dark-bg/50 text-theme-dark-primary" : "bg-theme-light-bg text-theme-light-primary border border-theme-light-border/50"
-          )}>
+          <div className="flex h-12 w-12 items-center justify-center rounded-md bg-gray-50 border border-gray-200 text-black">
             <Icon className="h-6 w-6" aria-hidden="true" />
           </div>
         )}
@@ -43,17 +27,12 @@ export default function StatsCard({ title, value, icon: Icon, trend, trendValue 
       {(trend || trendValue) && (
         <div className="mt-4 flex items-center text-sm">
           <span className={classNames(
-            "font-medium",
-            trend === "up" 
-              ? (theme === "dark" ? "text-emerald-400" : "text-emerald-600") 
-              : (theme === "dark" ? "text-rose-400" : "text-rose-600")
+            "font-bold",
+            trend === "up" ? "text-green-600" : trend === "down" ? "text-red-600" : "text-black"
           )}>
-            {trend === "up" ? "↑" : "↓"} {trendValue}
+            {trend === "up" ? "↑" : trend === "down" ? "↓" : ""} {trendValue}
           </span>
-          <span className={classNames(
-            "ml-2",
-            theme === "dark" ? "text-theme-dark-muted" : "text-theme-light-muted"
-          )}>
+          <span className="ml-2 font-medium text-gray-400">
             vs last month
           </span>
         </div>
