@@ -117,7 +117,7 @@ export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }) {
 
       {/* Mobile Sidebar Overlay */}
       {mobileMenuOpen && (
-        <div className="relative z-[100] lg:hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
+        <div className="relative z-100 lg:hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
           <div 
             className="fixed inset-0 bg-black/60 transition-opacity" 
             onClick={() => setMobileMenuOpen(false)}

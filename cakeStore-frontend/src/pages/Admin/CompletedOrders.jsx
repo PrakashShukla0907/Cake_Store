@@ -300,7 +300,7 @@ const StatusDropdown = ({ currentStatus, onChange, getStatusConfig, isUpdating }
       {isOpen && !isLocked && (
         <>
           <div className="fixed inset-0 z-[45]" onClick={() => setIsOpen(false)} />
-          <div className="absolute left-0 mt-1 w-full min-w-[180px] rounded-md shadow-lg border border-gray-200 bg-white z-[100]">
+          <div className="absolute left-0 mt-1 w-full min-w-[180px] rounded-md shadow-lg border border-gray-200 bg-white z-100">
             <div className="p-1">
               {options.map((opt) => {
                 const optConfig = getStatusConfig(opt);
@@ -336,7 +336,7 @@ const OrderDetailsModal = ({ order, onClose, getStatusConfig }) => {
   const config = getStatusConfig(order.orderStatus);
   
   return (
-    <div className="fixed inset-0 z-[100] overflow-y-auto">
+    <div className="fixed inset-0 z-100 overflow-y-auto">
       <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
         <div 
           className="fixed inset-0 bg-black/60 transition-opacity" 

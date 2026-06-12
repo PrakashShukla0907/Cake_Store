@@ -329,7 +329,7 @@ const Orders = () => {
 
       {/* Cancel Confirmation Modal */}
       {orderToCancel && (
-        <div className="fixed inset-0 z-[100] overflow-y-auto">
+        <div className="fixed inset-0 z-100 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
             <div
               className="fixed inset-0 bg-black/60 transition-opacity"
@@ -371,7 +371,7 @@ const OrderReceiptModal = ({ order, onClose, getStatusConfig }) => {
   const config = getStatusConfig(order.orderStatus);
 
   return (
-    <div className="fixed inset-0 z-[100] overflow-y-auto">
+    <div className="fixed inset-0 z-100 overflow-y-auto">
       <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
         <div
           className="fixed inset-0 bg-black/60 transition-opacity"

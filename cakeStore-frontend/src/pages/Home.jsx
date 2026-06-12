@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getProducts } from "../api/product.api";
 import ProductCard from "../components/ProductCard";
+import { Filter } from "lucide-react";
 
 export default function Home() {
   const [products, setProducts] = useState([]);
@@ -12,12 +13,20 @@ export default function Home() {
 
   const currentPage = parseInt(searchParams.get("page")) || 1;
   const searchQuery = searchParams.get("search") || "";
+  const categoryParam = searchParams.get("category") || "";
 
-  const fetchProducts = async (page = 1, search = "") => {
+  const categories = ["All", "cake", "pastry", "bread", "cookies", "cupcake", "other"];
+
+  const fetchProducts = async (page = 1, search = "", category = "") => {
     setLoading(true);
     setError("");
     try {
-      const response = await getProducts({ page, limit: 12, ...(search && { search }) });
+      const response = await getProducts({ 
+        page, 
+        limit: 12, 
+        ...(search && { search }),
+        ...(category && { category })
+      });
       setProducts(response.data.products || []);
       setTotalPages(response.data.totalPages || 1);
     } catch (err) {
@@ -28,12 +37,21 @@ export default function Home() {
     }
   };
 
-  useEffect(() => { fetchProducts(currentPage, searchQuery); }, [currentPage, searchQuery]);
+  useEffect(() => { fetchProducts(currentPage, searchQuery, categoryParam); }, [currentPage, searchQuery, categoryParam]);
 
   const handlePageChange = (page) => {
     const params = new URLSearchParams();
     if (searchQuery) params.set("search", searchQuery);
+    if (categoryParam) params.set("category", categoryParam);
     params.set("page", page);
+    setSearchParams(params);
+  };
+
+  const handleCategoryChange = (category) => {
+    const params = new URLSearchParams();
+    if (searchQuery) params.set("search", searchQuery);
+    if (category) params.set("category", category);
+    params.set("page", 1);
     setSearchParams(params);
   };
 
@@ -57,6 +75,29 @@ export default function Home() {
             <p className="text-sm text-gray-500 mt-1">{products.length} cake{products.length !== 1 ? "s" : ""} found</p>
           </div>
         )}
+
+        {/* Filter Section */}
+        <div className="flex flex-wrap gap-2 mb-8 items-center border-b border-gray-100 pb-6">
+          <span className="text-sm font-bold text-gray-500 mr-2 flex items-center gap-2">
+             <Filter className="h-4 w-4" /> Filter:
+          </span>
+          {categories.map((cat) => {
+            const isSelected = categoryParam === cat || (cat === "All" && !categoryParam);
+            return (
+              <button
+                key={cat}
+                onClick={() => handleCategoryChange(cat === "All" ? "" : cat)}
+                className={`px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest transition-all border ${
+                  isSelected
+                    ? "bg-black text-white border-black shadow-sm"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-black hover:text-black"
+                }`}
+              >
+                {cat}
+              </button>
+            );
+          })}
+        </div>
 
         {/* Loading */}
         {loading ? (

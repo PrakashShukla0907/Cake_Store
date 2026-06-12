@@ -18,7 +18,7 @@ export default function NotificationToast({ notification, onClose }) {
   if (!notification) return null;
 
   return (
-    <div className={`fixed bottom-6 right-6 z-[100] max-w-sm w-full transform transition-all duration-300 ease-out flex items-center gap-4 p-4 rounded-md shadow-2xl border border-gray-200 bg-white text-black ${visible ? "translate-y-0 opacity-100 scale-100" : "translate-y-4 opacity-0 scale-95"}`}>
+    <div className={`fixed bottom-6 right-6 z-100 max-w-sm w-full transform transition-all duration-300 ease-out flex items-center gap-4 p-4 rounded-md shadow-2xl border border-gray-200 bg-white text-black ${visible ? "translate-y-0 opacity-100 scale-100" : "translate-y-4 opacity-0 scale-95"}`}>
       <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-md bg-black text-white shadow-sm">
         <ShoppingBag className="h-5 w-5" />
       </div>

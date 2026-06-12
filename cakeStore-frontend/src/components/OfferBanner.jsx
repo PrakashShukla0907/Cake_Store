@@ -34,7 +34,7 @@ export default function OfferBanner() {
       <div className="w-full rounded-2xl overflow-hidden border border-gray-100 shadow-sm bg-gray-50">
         {/* Slide track */}
         <div
-          className="flex w-full aspect-[2/1] sm:aspect-[21/9] md:aspect-[10/3] transition-transform duration-700 ease-in-out"
+          className="flex w-full aspect-2/1 sm:aspect-21/9 md:aspect-10/3 transition-transform duration-700 ease-in-out"
           style={{ transform: `translateX(-${currentIndex * 100}%)` }}
         >
           {banners.map((banner, index) => (
