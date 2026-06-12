@@ -31,8 +31,7 @@ export const getAdminStats = async () => {
 
 // --- PRODUCTS ---
 export const getAdminProducts = async (page = 1, search = '') => {
-  // Pass query params as needed, e.g., ?page=1&search=cake
-  const response = await api.get(`/products?page=${page}&keyword=${search}`);
+  const response = await api.get(`/products?page=${page}&search=${search}`);
   return response.data;
 };
 

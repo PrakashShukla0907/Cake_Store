@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Plus, Search, Edit2, Trash2, Image as ImageIcon, X, Loader2 } from "lucide-react";
 import { getAdminProducts, deleteAdminProduct, createAdminProduct, updateAdminProduct } from "../../api/admin.api";
 import ConfirmModal from "../../components/Admin/ConfirmModal";
@@ -6,8 +6,12 @@ import ConfirmModal from "../../components/Admin/ConfirmModal";
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const observerTarget = useRef(null);
   
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -46,21 +50,50 @@ export default function AdminProducts() {
     setIsModalOpen(true);
   };
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (pageNum, reset = false) => {
     try {
-      setLoading(true);
-      const data = await getAdminProducts(1, searchTerm);
-      setProducts(data?.products || data || []); 
+      if (reset) {
+        setLoading(true);
+      } else {
+        setLoadingMore(true);
+      }
+      
+      const data = await getAdminProducts(pageNum, searchTerm);
+      const fetchedProducts = data?.products || data || [];
+      
+      setProducts(prev => reset ? fetchedProducts : [...prev, ...fetchedProducts]);
+      setHasMore(data?.page < data?.pages);
+      setPage(pageNum);
     } catch (error) {
       console.error("Failed to fetch products:", error);
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
   useEffect(() => {
-    fetchProducts();
+    // Reset to page 1 when search term changes
+    fetchProducts(1, true);
   }, [searchTerm]);
+
+  // Intersection Observer for infinite scrolling
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting && hasMore && !loading && !loadingMore) {
+          fetchProducts(page + 1);
+        }
+      },
+      { threshold: 1.0 }
+    );
+    
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+    
+    return () => observer.disconnect();
+  }, [hasMore, loading, loadingMore, page, searchTerm]);
 
   const handleDelete = (product) => {
     setDeleteModal({
@@ -74,7 +107,7 @@ export default function AdminProducts() {
     try {
       setLoading(true);
       await deleteAdminProduct(deleteModal.productId);
-      fetchProducts();
+      fetchProducts(1, true); // Refresh from page 1
     } catch (error) {
       console.error("Error deleting product:", error);
       alert("Failed to delete product");
@@ -111,7 +144,7 @@ export default function AdminProducts() {
       setIsModalOpen(false);
       setEditingId(null);
       setNewProduct({ name: "", description: "", price: "", image: null, category: "cake", available: true });
-      fetchProducts(); // Refresh
+      fetchProducts(1, true); // Refresh from page 1 after save
     } catch (err) {
       console.error("Failed to save product:", err);
       alert("Error saving product. Check console.");
@@ -283,9 +316,9 @@ export default function AdminProducts() {
         </div>
       ) : (
         <div className="rounded-md shadow-sm border border-gray-200 bg-white overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50 text-gray-500">
+          <div className="overflow-hidden sm:overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200 block sm:table">
+              <thead className="bg-gray-50 text-gray-500 hidden sm:table-header-group">
                 <tr>
                   <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-xs font-black uppercase tracking-widest sm:pl-6">Product</th>
                   <th scope="col" className="px-3 py-3.5 text-left text-xs font-black uppercase tracking-widest">Category</th>
@@ -296,11 +329,12 @@ export default function AdminProducts() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-200 block sm:table-row-group">
                 {products.map((product) => (
-                  <tr key={product._id} className="transition-colors hover:bg-gray-50">
-                    <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
-                      <div className="flex items-center">
+                  <tr key={product._id} className="transition-all hover:bg-gray-50 block sm:table-row border-b border-gray-200 sm:border-0 p-4 sm:p-0">
+                    <td className="whitespace-nowrap py-2 sm:py-4 pl-0 sm:pl-6 pr-0 sm:pr-3 flex justify-between items-center sm:table-cell border-b border-gray-100 sm:border-0">
+                      <span className="sm:hidden text-[10px] font-black uppercase tracking-widest text-gray-400">Product</span>
+                      <div className="flex items-center text-right sm:text-left">
                         <div className="h-10 w-10 flex-shrink-0">
                           {product.image ? (
                             <img className="h-10 w-10 rounded-md object-cover border border-gray-200 bg-white" src={product.image} alt={product.name} />
@@ -311,21 +345,26 @@ export default function AdminProducts() {
                           )}
                         </div>
                         <div className="ml-4">
-                          <div className="font-bold text-black">
+                          <div className="font-bold text-black max-w-[150px] sm:max-w-none truncate">
                             {product.name}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    <td className="whitespace-nowrap py-2 sm:py-4 px-0 sm:px-3 flex justify-between items-center sm:table-cell border-b border-gray-100 sm:border-0">
+                      <span className="sm:hidden text-[10px] font-black uppercase tracking-widest text-gray-400">Category</span>
                       <span className="inline-flex items-center rounded-sm px-2 py-0.5 text-[10px] font-black uppercase tracking-widest bg-gray-100 text-gray-700 border border-gray-200">
                         {product.category || "Uncategorized"}
                       </span>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm font-black text-black">
-                      ₹{product.price?.toFixed(2)}
+                    <td className="whitespace-nowrap py-2 sm:py-4 px-0 sm:px-3 flex justify-between items-center sm:table-cell border-b border-gray-100 sm:border-0">
+                      <span className="sm:hidden text-[10px] font-black uppercase tracking-widest text-gray-400">Price</span>
+                      <span className="text-sm font-black text-black">
+                        ₹{product.price?.toFixed(2)}
+                      </span>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm">
+                    <td className="whitespace-nowrap py-2 sm:py-4 px-0 sm:px-3 flex justify-between items-center sm:table-cell border-b border-gray-100 sm:border-0">
+                      <span className="sm:hidden text-[10px] font-black uppercase tracking-widest text-gray-400">Status</span>
                       <span className={`inline-flex items-center rounded-sm px-2 py-0.5 text-[10px] font-black uppercase tracking-widest ${
                         product.available !== false
                           ? "bg-black text-white"
@@ -334,27 +373,46 @@ export default function AdminProducts() {
                         {product.available !== false ? "Available" : "Out of Stock"}
                       </span>
                     </td>
-                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                      <button 
-                        onClick={() => handleEditClick(product)}
-                        className="mr-4 transition-colors text-black hover:text-gray-600"
-                      >
-                        <Edit2 className="h-4 w-4" />
-                        <span className="sr-only">Edit {product.name}</span>
-                      </button>
-                      <button 
-                        onClick={() => handleDelete(product)}
-                        className="text-red-600 hover:text-red-800 transition-colors"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                        <span className="sr-only">Delete {product.name}</span>
-                      </button>
+                    <td className="relative whitespace-nowrap py-3 sm:py-4 pl-0 sm:pl-3 pr-0 sm:pr-6 flex justify-between sm:justify-end items-center sm:table-cell">
+                      <span className="sm:hidden text-[10px] font-black uppercase tracking-widest text-gray-400">Actions</span>
+                      <div className="flex gap-4 sm:gap-0">
+                        <button 
+                          onClick={() => handleEditClick(product)}
+                          className="sm:mr-4 transition-colors text-black hover:text-gray-600 p-2 sm:p-0 rounded-md border border-gray-200 sm:border-0 hover:bg-gray-100 sm:hover:bg-transparent"
+                        >
+                          <Edit2 className="h-4 w-4" />
+                          <span className="sr-only">Edit {product.name}</span>
+                        </button>
+                        <button 
+                          onClick={() => handleDelete(product)}
+                          className="text-red-600 hover:text-red-800 transition-colors p-2 sm:p-0 rounded-md border border-gray-200 sm:border-0 hover:bg-red-50 sm:hover:bg-transparent"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          <span className="sr-only">Delete {product.name}</span>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+          
+          {/* Intersection Observer Target for Infinite Scroll */}
+          {products.length > 0 && (
+            <div 
+              ref={observerTarget} 
+              className="py-4 flex justify-center items-center h-16 bg-white border-t border-gray-100"
+            >
+              {loadingMore ? (
+                <div className="flex items-center gap-2 text-gray-500 font-bold text-xs uppercase tracking-widest">
+                  <Loader2 className="h-4 w-4 animate-spin" /> Loading more...
+                </div>
+              ) : !hasMore ? (
+                <span className="text-gray-400 font-bold text-xs uppercase tracking-widest">End of results</span>
+              ) : null}
+            </div>
+          )}
         </div>
       )}
       {/* Custom Confirm Delete Modal */}

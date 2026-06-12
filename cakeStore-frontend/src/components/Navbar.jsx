@@ -184,7 +184,7 @@ export default function Navbar() {
                     </button>
 
                     {showNotifications && (
-                      <div className="absolute right-0 mt-2 w-80 origin-top-right rounded-lg shadow-xl ring-1 ring-black/10  z-[60] overflow-hidden bg-white  border border-gray-200 ">
+                      <div className="fixed left-1/2 -translate-x-1/2 top-14 sm:absolute sm:left-auto sm:translate-x-0 sm:top-auto sm:right-0 mt-2 w-[90vw] max-w-[280px] sm:w-80 origin-top-right rounded-lg shadow-xl ring-1 ring-black/10 z-50 overflow-hidden bg-white border border-gray-200">
                         <div className="px-4 py-3 border-b border-gray-100  flex justify-between items-center">
                           <h3 className="text-xs font-black uppercase tracking-widest text-black  flex items-center gap-1.5">
                             <Bell className="h-3.5 w-3.5" />
@@ -212,11 +212,19 @@ export default function Navbar() {
                             notifications.map((n) => (
                               <li
                                 key={n._id}
+                                onClick={() => {
+                                  setShowNotifications(false);
+                                  if (n.type === "Order Cancelled") {
+                                    navigate("/admin/cancelled-orders");
+                                  } else {
+                                    navigate("/admin/orders");
+                                  }
+                                }}
                                 className={classNames(
                                   "px-4 py-3 text-sm cursor-pointer transition-colors border-l-2 group relative",
                                   n.isRead
-                                    ? "text-gray-400 hover:bg-gray-50 :bg-gray-900 border-transparent"
-                                    : "text-gray-900  bg-gray-50  hover:bg-gray-100 :bg-gray-800 border-black ",
+                                    ? "text-gray-400 hover:bg-gray-50 border-transparent"
+                                    : "text-gray-900 bg-gray-50 hover:bg-gray-100 border-black"
                                 )}
                               >
                                 <div className="flex justify-between items-start gap-2">

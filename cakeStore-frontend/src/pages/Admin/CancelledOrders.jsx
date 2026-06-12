@@ -171,9 +171,9 @@ export default function CancelledOrders() {
         </div>
       ) : (
         <div className="rounded-md shadow-sm border border-gray-200 bg-white">
-          <div className="overflow-x-auto pb-24">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50 text-gray-500">
+          <div className="overflow-hidden sm:overflow-x-auto sm:pb-24">
+            <table className="min-w-full divide-y divide-gray-200 block sm:table">
+              <thead className="bg-gray-50 text-gray-500 hidden sm:table-header-group">
                 <tr>
                   <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-xs font-black uppercase tracking-widest sm:pl-6">Order ID</th>
                   <th scope="col" className="px-3 py-3.5 text-left text-xs font-black uppercase tracking-widest">Customer</th>
@@ -186,34 +186,41 @@ export default function CancelledOrders() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-200 block sm:table-row-group">
                  {orders.filter(order => 
                     order._id.toLowerCase().includes(searchQuery.toLowerCase()) ||
                     order.user?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                     order.user?.email?.toLowerCase().includes(searchQuery.toLowerCase())
                  ).map((order) => (
-                  <tr key={order._id} className="transition-colors hover:bg-gray-50 group">
-                    <td className="whitespace-nowrap py-4 pl-4 pr-3 sm:pl-6">
-                      <div className="font-mono font-bold text-sm text-black">
-                        #{order._id.substring(order._id.length - 6).toUpperCase()}
-                      </div>
-                      <div className="text-[11px] mt-1 font-medium text-gray-500">
-                        {new Date(order.createdAt).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}
-                      </div>
-                    </td>
-                     <td className="whitespace-nowrap px-3 py-4">
-                      <div className="font-bold text-sm text-black">
-                        {order.user?.name || "Guest"}
-                      </div>
-                      <div className="text-[11px] mt-0.5 font-medium text-gray-500">
-                        {order.user?.email}
+                  <tr key={order._id} className="transition-all hover:bg-gray-50 block sm:table-row border-b border-gray-200 sm:border-0 p-4 sm:p-0">
+                    <td className="whitespace-nowrap py-2 sm:py-4 pl-0 sm:pl-6 pr-0 sm:pr-3 flex justify-between items-center sm:table-cell border-b border-gray-100 sm:border-0">
+                      <span className="sm:hidden text-[10px] font-black uppercase tracking-widest text-gray-400">Order ID</span>
+                      <div className="text-right sm:text-left">
+                        <div className="font-mono font-bold text-sm text-black">
+                          #{order._id.substring(order._id.length - 6).toUpperCase()}
+                        </div>
+                        <div className="text-[11px] mt-1 font-medium text-gray-500">
+                          {new Date(order.createdAt).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}
+                        </div>
                       </div>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4">
-                      <div className="flex flex-col min-w-0">
+                     <td className="whitespace-nowrap py-2 sm:py-4 px-0 sm:px-3 flex justify-between items-center sm:table-cell border-b border-gray-100 sm:border-0">
+                      <span className="sm:hidden text-[10px] font-black uppercase tracking-widest text-gray-400">Customer</span>
+                      <div className="text-right sm:text-left">
+                        <div className="font-bold text-sm text-black">
+                          {order.user?.name || "Guest"}
+                        </div>
+                        <div className="text-[11px] mt-0.5 font-medium text-gray-500">
+                          {order.user?.email}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="whitespace-nowrap py-2 sm:py-4 px-0 sm:px-3 flex justify-between items-center sm:table-cell border-b border-gray-100 sm:border-0">
+                      <span className="sm:hidden text-[10px] font-black uppercase tracking-widest text-gray-400">Items</span>
+                      <div className="flex flex-col min-w-0 text-right sm:text-left items-end sm:items-start">
                         {order.items?.length > 0 && (
                           <>
-                            <span className="text-[13px] font-bold truncate max-w-[200px] text-black">
+                            <span className="text-[13px] font-bold truncate max-w-[150px] sm:max-w-[200px] text-black">
                               {order.items[0]?.product?.name || "Product"}
                             </span>
                             {order.items.length > 1 && (
@@ -225,38 +232,47 @@ export default function CancelledOrders() {
                         )}
                       </div>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4">
-                       <div className="flex flex-col text-black">
+                    <td className="whitespace-nowrap py-2 sm:py-4 px-0 sm:px-3 flex justify-between items-center sm:table-cell border-b border-gray-100 sm:border-0">
+                       <span className="sm:hidden text-[10px] font-black uppercase tracking-widest text-gray-400">Qty</span>
+                       <div className="flex flex-col text-black items-end sm:items-start">
                           <span className="text-sm font-bold">
                              {order.items[0]?.quantity || 1} <span className="text-xs font-medium text-gray-500 ml-0.5">pc{order.items[0]?.quantity > 1 ? 's' : ''}</span>
                           </span>
+                          {order.items.length > 1 && (
+                            <span className="text-[10px] font-bold mt-1.5 px-2 py-0.5 rounded-sm bg-gray-100 text-gray-600 border border-gray-200">
+                               {order.items.reduce((acc, item) => acc + (item.quantity || 1), 0)} Total
+                            </span>
+                          )}
                        </div>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-base font-black text-black">
-                      ₹{order.totalAmount?.toFixed(2)}
+                    <td className="whitespace-nowrap py-2 sm:py-4 px-0 sm:px-3 flex justify-between items-center sm:table-cell border-b border-gray-100 sm:border-0">
+                      <span className="sm:hidden text-[10px] font-black uppercase tracking-widest text-gray-400">Total</span>
+                      <span className="text-base font-black text-black">₹{order.totalAmount?.toFixed(2)}</span>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm">
-                      <StatusDropdown 
-                        currentStatus={order.orderStatus} 
-                        onChange={(status) => handleStatusChange(order._id, status)}
-                        getStatusConfig={getStatusConfig}
-                        isUpdating={updatingId === order._id}
-                      />
-                      {order.cancelledBy && (
-                        <div className="mt-2 text-center">
-                          <span className="inline-block px-2 py-0.5 rounded-sm bg-gray-100 border border-gray-200 text-[9px] font-black uppercase tracking-[1px] text-gray-500">
+                    <td className="whitespace-nowrap py-3 sm:py-4 px-0 sm:px-3 flex justify-between items-center sm:table-cell border-b border-gray-100 sm:border-0">
+                      <span className="sm:hidden text-[10px] font-black uppercase tracking-widest text-gray-400">Status</span>
+                      <div className="w-36 sm:w-auto text-right sm:text-left">
+                        <StatusDropdown 
+                          currentStatus={order.orderStatus} 
+                          onChange={(status) => handleStatusChange(order._id, status)}
+                          getStatusConfig={getStatusConfig}
+                          isUpdating={updatingId === order._id}
+                        />
+                        {order.cancelledBy && (
+                          <div className="mt-1 text-[9px] font-black uppercase tracking-widest text-red-500">
                             By: {order.cancelledBy}
-                          </span>
-                        </div>
-                      )}
+                          </div>
+                        )}
+                      </div>
                     </td>
-                     <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                     <td className="relative whitespace-nowrap py-3 sm:py-4 pl-0 sm:pl-3 pr-0 sm:pr-6 flex justify-between sm:justify-end items-center sm:table-cell">
+                      <span className="sm:hidden text-[10px] font-black uppercase tracking-widest text-gray-400">Actions</span>
                       <button 
                         onClick={() => setSelectedOrder(order)}
-                        className="inline-flex p-2 rounded-md transition-all hover:bg-gray-100 border border-gray-200 shadow-sm text-black bg-white"
+                        className="inline-flex items-center gap-2 px-3 py-2 sm:p-2 rounded-md transition-all hover:bg-gray-100 border border-gray-200 shadow-sm text-black bg-white text-xs sm:text-sm font-bold"
                       >
                         <Eye className="h-4 w-4" />
-                        <span className="sr-only">View Order</span>
+                        <span className="sm:sr-only">View Order</span>
                       </button>
                     </td>
                   </tr>

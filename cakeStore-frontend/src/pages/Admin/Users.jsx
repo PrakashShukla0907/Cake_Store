@@ -5,6 +5,7 @@ import { getAdminUsers } from "../../api/admin.api";
 export default function AdminUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const fetchUsers = async () => {
     try {
@@ -42,6 +43,8 @@ export default function AdminUsers() {
           </div>
           <input
             type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="block w-full rounded-md border border-gray-200 py-2 pl-10 pr-3 shadow-sm bg-white text-black placeholder:text-gray-400 focus:border-black focus:ring-1 focus:ring-black sm:text-sm sm:leading-6 transition-colors"
             placeholder="Search email..."
           />
@@ -66,7 +69,9 @@ export default function AdminUsers() {
       ) : (
         <div className="rounded-md shadow-sm border border-gray-200 bg-white overflow-hidden">
           <ul role="list" className="divide-y divide-gray-200">
-            {users.map((user) => (
+            {users
+              .filter(user => user.email?.toLowerCase().includes(searchTerm.toLowerCase()) || user.name?.toLowerCase().includes(searchTerm.toLowerCase()))
+              .map((user) => (
               <li key={user._id} className="flex items-center justify-between gap-x-6 px-4 py-5 sm:px-6 hover:bg-gray-50 transition-colors">
                 <div className="flex min-w-0 gap-x-4">
                   <div className="h-12 w-12 flex-none rounded-md flex items-center justify-center font-black text-lg bg-gray-100 text-black border border-gray-200">
